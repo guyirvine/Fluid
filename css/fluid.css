@@ -1,0 +1,61 @@
+#fluid-ui-list div.title {
+    color: #444444;
+}
+
+#fluid-ui-list span.title,   {
+    color: #999999;
+}
+
+#fluid-ui-list div.head  {
+    border: 1px outset #DDDDDD;
+    background-color: #DDDDDD;
+	position: relative;
+}
+#fluid-ui-list div.head:hover {
+    background-color: #EEEEEE;
+}
+
+
+#fluid-ui-list div.body  {
+    background-color: white;
+}
+
+#fluid-ui-list {
+    padding: 9px;
+/*    background-color: grey;*/
+    border: 1px solid black;
+	position: relative;
+}
+
+#fluid-ui-list div.title {
+    padding: 6px;
+}
+
+#fluid-ui-list span.title {
+    color: #777777;
+    font-size: smaller;
+}
+
+#fluid-ui-list div.detail {
+    position: absolute;
+    right: 5px;
+    top: 7px;
+    text-align: right;
+    font-size: small;
+    color: #444444;
+}
+
+#fluid-ui-list div.body {
+    display: none;
+    padding-top: 6px;
+    padding-left: 12px;
+    padding-bottom: 12px;
+    font-size: small;
+    border-top: 1px solid midnightblue;
+    border-bottom: 1px solid midnightblue;
+}
+
+#fluid-ui-list div.selected {
+    border: 1px solid #5788C0;
+}
+
