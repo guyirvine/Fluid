@@ -7,9 +7,7 @@
 	}
 
 	//Initialise the objects we'll need
-	if (isset($GLOBALS['testing'])) {
-		$GLOBALS['loggedInUser']['id'] = 1;
-	} else {
+	if (!isset($GLOBALS['testing'])) {
 		if (!isset($_SERVER['PHP_AUTH_USER'])) {
 			basic_auth_denied();
 		} elseif ( !isset($_SERVER['PHP_AUTH_PW'])) {
