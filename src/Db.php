@@ -12,6 +12,7 @@ interface Fluid_Db
 	function queryForArray( $sql, $params );
 	function queryForValue( $sql, $params );
 	function queryForResultset( $sql, $params );
+	function queryForSearch( $sql, $params, $start, $count );
 	function getNewId( $sequenceName );
 	function execute( $sql, $params );
 

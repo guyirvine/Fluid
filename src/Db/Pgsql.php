@@ -96,6 +96,37 @@ class Fluid_Db_Pgsql
 	}
 
 
+	function queryForSearch( $sql, $params, $start, $count ) {
+		$total_count_sql = "SELECT count(*) FROM ( $sql ) AS q";
+		$total_count = $this->queryForValue( $total_count_sql, $params );
+
+
+		$param_count = count( $params );
+		$start_index = $param_count+1;
+		$limit_index = $param_count+2;
+		$search_sql = "$sql OFFSET " . '$' . "$start_index LIMIT " . '$' . "$limit_index";
+		$params[] = $start;
+		$params[] = $count;
+		
+
+		$result = pg_query_params( $this->connection, $search_sql, $params );
+//		print "search_sql: $search_sql. " . print_r( $params, true );
+
+		if ( $result === false ) {
+			$message = pg_last_error( $this->connection );
+			throw new Fluid_ConnectionException( $message );
+		}
+
+		$list = array();
+		while( ( $row = pg_fetch_assoc( $result ) ) ) {
+			$list[] = $row;	
+		}
+
+
+		return array( $list, $total_count );
+	}
+
+
 	function getNewId( $sequenceName ) {
 		$sql = "SELECT NEXTVAL( $1 ) AS new_id";
 
