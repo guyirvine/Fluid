@@ -1,6 +1,7 @@
 <?php
+	
 function fluid_log( $string, $filename="/tmp/log" ) {
-	if ( $GLOBALS['logging'] == 1 )
+//	if ( $GLOBALS['logging'] == 1 )
 		file_put_contents( $filename, "$string\n", FILE_APPEND );
 }
 
@@ -103,7 +104,7 @@ function parse_csv_line( $input, $delimiter=",", $enclosure='"' ) {
 }
 
 
-function substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
+function fluid_substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
 	if ( strlen( $string ) == 0 ) {
 		return '';
 	}
