@@ -1,5 +1,12 @@
 <?php
 
+function fluid_log( $string, $filename="/tmp/log" ) {
+        if ( $GLOBALS['logging'] == 1 )
+                file_put_contents( $filename, "$string\n", FILE_APPEND );
+}
+
+
+
 function c( $command ) {
 	$parts = pathinfo( $_SERVER['REQUEST_URI'] );
 	$name = $parts['filename'];

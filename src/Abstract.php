@@ -9,6 +9,7 @@ abstract class Fluid_Abstract {
 
 
 	function __construct( Fluid $fluid ) {
+		fluid_log( "Construct: " . get_class( $this ) );
 		$this->fluid = $fluid;
 	}
 

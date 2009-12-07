@@ -19,7 +19,6 @@ function fluid_error_handler($errno, $errstr, $errfile, $errline) {
 	syslog( LOG_DEBUG, "fluid_error_handler. $errfile($errline). $errstr" );
 	print "<h1>fluid_error_handler. $errfile($errline). $errstr</h1><br>";
 	print "<pre>\n";
-	//    die();
 	if ( isset( $GLOBALS['debug_print_backtrace'] ) ) {
 		debug_print_backtrace();
 	}
