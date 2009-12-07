@@ -60,7 +60,7 @@ function i_nn( $variable, $value ) {
 }
 
 
-function flatten( $array, $depth=null ) {
+function fluid_flatten( $array, $depth=null ) {
 	$list = array();
 	foreach( $array as $item ) {
 		if ( is_array( $item ) ) {
@@ -76,7 +76,7 @@ function flatten( $array, $depth=null ) {
 }
 
 
-function coalesce() {
+function fluid_coalesce() {
 	$args = func_get_args();
 	foreach ($args as $arg) {
 		if (!empty($arg)) {
@@ -88,7 +88,7 @@ function coalesce() {
 }
 
 
-function parse_csv_line( $input, $delimiter=",", $enclosure='"' ) {
+function fluid_parse_csv_line( $input, $delimiter=",", $enclosure='"' ) {
 	$fh = fopen('php://memory', 'rw'); 
 	fwrite($fh, $input); 
 	rewind($fh); 
@@ -98,7 +98,7 @@ function parse_csv_line( $input, $delimiter=",", $enclosure='"' ) {
 }
 
 
-function substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
+function fluid_substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
         if ( strlen( $string ) == 0 ) {
             return '';
         }

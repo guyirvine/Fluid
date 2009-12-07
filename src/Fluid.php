@@ -8,15 +8,27 @@ class Fluid {
 
 	private $connection;
 	private $user_id;
+	private $startTransaction;
 
 
-	function __construct( $connection, $user_id ) {
+	function __construct( $connection, $user_id, $startTransaction ) {
 		$this->connection = $connection;
 		$this->user_id = $user_id;
+		$this->startTransaction = $startTransaction;
+		if ( $startTransaction )
+			$connection->startTransaction();
+
+
 
 
 	}
 
+
+	function __destruct() {
+		if ( $this->startTransaction )
+			$this->connection->commitTransaction();
+
+	}
 
 	function __get( $name ) {
 		switch( $name ) {
@@ -166,11 +178,7 @@ function f( $connection=null, $user_id=null, $startTransaction=true ) {
 			throw new Exception();
 
 		
-		if ( $startTransaction )
-			$connection->startTransaction();
-
-
-		$fluid = new Fluid( $connection, $user_id );
+		$fluid = new Fluid( $connection, $user_id, $startTransaction );
 	}
 
 	return $fluid;
