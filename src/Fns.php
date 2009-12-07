@@ -1,4 +1,9 @@
 <?php
+function fluid_log( $string, $filename="/tmp/log" ) {
+	if ( $GLOBALS['logging'] == 1 )
+		file_put_contents( $filename, "$string\n", FILE_APPEND );
+}
+
 
 function c( $command ) {
 	$parts = pathinfo( $_SERVER['REQUEST_URI'] );
@@ -99,24 +104,24 @@ function parse_csv_line( $input, $delimiter=",", $enclosure='"' ) {
 
 
 function substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
-        if ( strlen( $string ) == 0 ) {
-            return '';
-        }
-        
-        $parts = explode( "\n", $string, 2 );
-        if ( strlen( $parts[0] ) < $max_len ) {
-            return $parts[0];
-        }
+	if ( strlen( $string ) == 0 ) {
+		return '';
+	}
 
-        $partial_string = substr( $parts[0], 0, $max_len );
-        $end_pos = strrpos( $partial_string, " " );
-        $final_string = substr( $partial_string, 0, $end_pos );
-        $final_string = trim( $final_string );
-        
-        $final_string .= $suffix;
+	$parts = explode( "\n", $string, 2 );
+	if ( strlen( $parts[0] ) < $max_len ) {
+		return $parts[0];
+	}
 
-        return $final_string;
-}    
+	$partial_string = substr( $parts[0], 0, $max_len );
+	$end_pos = strrpos( $partial_string, " " );
+	$final_string = substr( $partial_string, 0, $end_pos );
+	$final_string = trim( $final_string );
+
+	$final_string .= $suffix;
+
+	return $final_string;
+}
 
 
 function fluid_redirect( $url ) {

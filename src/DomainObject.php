@@ -15,7 +15,7 @@ abstract class Fluid_DomainObject {
 
 
 			default:
-				throw new NoDataFoundException();
+				throw new Exception();
 		}
 	}
 

@@ -94,6 +94,7 @@ class Fluid {
 
 
 		$handler_name = "StateChangeHandler_$name";
+		fluid_log( "$handler_name: " . print_r( $params ) );
 		$handler = new $handler_name( $this );
 
 		try {
@@ -113,10 +114,12 @@ class Fluid {
 		$name = array_shift( $params );
 
 
+		fluid_log( "Raise: $name. " . print_r( $params ) );
 		if ( is_file( "DomainEventHandler/$name.php" ) ) {
 			require_once "DomainEventHandler/$name.php";
 
 			$handler_name = "DomainEventHandler_$name";
+			fluid_log( "$handler_name: " . print_r( $params ) );
 			$handler = new $handler_name( $this );
 			call_user_func_array(array($handler, "handle"), $params);
 		} elseif ( is_dir( "DomainEventHandler/$name/" ) ) {
@@ -126,6 +129,7 @@ class Fluid {
 				require_once "DomainEventHandler/$name/" . $info['filename'] . ".php";
 
 				$handler_name = "DomainEventHandler_$name" . "_" . $info['filename'];
+				fluid_log( "$handler_name: " . print_r( $params ) );
 				$handler = new $handler_name( $this );
 				call_user_func_array(array($handler, "handle"), $params);
 				
@@ -146,6 +150,7 @@ class Fluid {
 
 
 		$handler_name = "AjaxHandler_$name";
+		fluid_log( "$handler_name: " );
 		$handler = new $handler_name( $this, $name );
 
 
