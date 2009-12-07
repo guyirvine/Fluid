@@ -1,8 +1,17 @@
 <?php
+<<<<<<< HEAD:src/Fns.php
 
+=======
+	
+>>>>>>> f43afefea817e115193e0ae0f7eb9aecb338c762:src/Fns.php
 function fluid_log( $string, $filename="/tmp/log" ) {
+<<<<<<< HEAD:src/Fns.php
         if ( $GLOBALS['logging'] == 1 )
                 file_put_contents( $filename, "$string\n", FILE_APPEND );
+=======
+//	if ( $GLOBALS['logging'] == 1 )
+		file_put_contents( $filename, "$string\n", FILE_APPEND );
+>>>>>>> f43afefea817e115193e0ae0f7eb9aecb338c762:src/Fns.php
 }
 
 
@@ -106,6 +115,7 @@ function fluid_parse_csv_line( $input, $delimiter=",", $enclosure='"' ) {
 
 
 function fluid_substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
+<<<<<<< HEAD:src/Fns.php
         if ( strlen( $string ) == 0 ) {
             return '';
         }
@@ -114,6 +124,11 @@ function fluid_substr_on_word_boundary( $string, $max_len=50, $suffix=' ...' ) {
         if ( strlen( $parts[0] ) < $max_len ) {
             return $parts[0];
         }
+=======
+	if ( strlen( $string ) == 0 ) {
+		return '';
+	}
+>>>>>>> f43afefea817e115193e0ae0f7eb9aecb338c762:src/Fns.php
 
         $partial_string = substr( $parts[0], 0, $max_len );
         $end_pos = strrpos( $partial_string, " " );

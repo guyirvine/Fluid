@@ -106,7 +106,7 @@ class Fluid {
 
 
 		$handler_name = "StateChangeHandler_$name";
-		fluid_log( "$handler_name: " . print_r( $params ) );
+		fluid_log( "$handler_name: " . print_r( $params, true ) );
 		$handler = new $handler_name( $this );
 
 		try {
@@ -144,6 +144,34 @@ class Fluid {
 				fluid_log( "$handler_name: " . print_r( $params ) );
 				$handler = new $handler_name( $this );
 				call_user_func_array(array($handler, "handle"), $params);
+				
+
+			}
+		}
+		
+
+	}
+
+
+	function Handle( Fluid_Bus $bus, $msg ) {
+
+
+		$name = (string)$msg->getName();
+		if ( is_file( "MessageHandler/$name.php" ) ) {
+			require_once "MessageHandler/$name.php";
+
+			$handler_name = "MessageHandler_$name";
+			$handler = new $handler_name( $this );
+			$handler->Handle( $msg );
+		} elseif ( is_dir( "MessageHandler/$name/" ) ) {
+			$list = glob( "MessageHandler/$name/*" );
+			foreach( $list as $filename ) {
+				$info = pathinfo( $filename );
+				require_once "MessageHandler/$name/" . $info['filename'] . ".php";
+
+				$handler_name = "MessageHandler_$name" . "_" . $info['filename'];
+				$handler = new $handler_name( $this );
+				$handler->Handle( $msg );
 				
 
 			}
