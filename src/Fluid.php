@@ -126,12 +126,12 @@ class Fluid {
 		$name = array_shift( $params );
 
 
-		fluid_log( "Raise: $name. " . print_r( $params ) );
+		fluid_log( "Raise: $name. " . print_r( $params, true ) );
 		if ( is_file( "DomainEventHandler/$name.php" ) ) {
 			require_once "DomainEventHandler/$name.php";
 
 			$handler_name = "DomainEventHandler_$name";
-			fluid_log( "$handler_name: " . print_r( $params ) );
+			fluid_log( "$handler_name: " . print_r( $params, true ) );
 			$handler = new $handler_name( $this );
 			call_user_func_array(array($handler, "handle"), $params);
 		} elseif ( is_dir( "DomainEventHandler/$name/" ) ) {
@@ -141,7 +141,7 @@ class Fluid {
 				require_once "DomainEventHandler/$name/" . $info['filename'] . ".php";
 
 				$handler_name = "DomainEventHandler_$name" . "_" . $info['filename'];
-				fluid_log( "$handler_name: " . print_r( $params ) );
+				fluid_log( "$handler_name: " . print_r( $params, true ) );
 				$handler = new $handler_name( $this );
 				call_user_func_array(array($handler, "handle"), $params);
 				
