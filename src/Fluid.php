@@ -198,6 +198,14 @@ class Fluid {
 	}
 
 
+	function Publish( $xml ) {
+		Fluid_Bus::get()->Publish( $xml );
+	}
+
+
+	function Send( $xml ) {
+		Fluid_Bus::get()->Send( $xml );
+	}
 }
 
 

@@ -23,7 +23,7 @@ abstract class Fluid_Abstract {
 			case 'fluid':
 				return $this->fluid;
 			default:
-				throw new NoDataFoundException();
+				throw new Exception( "Could not find property: $name" );
 		}
 	}
 
