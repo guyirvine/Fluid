@@ -1,5 +1,6 @@
 <?php
 require_once 'Fluid/Fns.php';
+require_once 'Fluid/Bus.php';
 class StateChangeException extends Exception {};
 
 
@@ -63,7 +64,7 @@ class Fluid {
 		} else {
 			$obj = $this->localBuild( $class_name, $data );
 		}
-		
+
 		return $obj;
 	}
 
@@ -154,14 +155,48 @@ class Fluid {
 
 
 	function Handle( Fluid_Bus $bus, $msg ) {
-
-
 		$name = (string)$msg->getName();
-		if ( is_file( "MessageHandler/$name.php" ) ) {
+
+
+		if ( !is_null( $bus->sagaId ) && 
+			is_file( "/tmp/" . $bus->appName . "-" . $bus->sagaId . ".dat" ) ) {
+			fluid_log( "Handle. $name. Existing Saga: " . $bus->sagaId );
+			$data = unserialize( file_get_contents( "/tmp/" . $bus->appName . "-" . $bus->sagaId . ".dat" ) );
+			$handler_name = $data["_handler_name"];
+			require_once $data["_file_name"];
+
+			$handler = new $handler_name( $this, $bus, $data );
+			$handler->$name( $msg );
+			if ( !$handler->isComplete() ) {
+				file_put_contents( "/tmp/" . $bus->appName . "-" . $bus->sagaId . ".dat", serialize( $handler->getData() ) );
+			} else {
+				unlink( "/tmp/" . $bus->appName . "-" . $bus->sagaId . ".dat" );
+			}
+
+		} elseif ( is_file( "Saga/$name.php" ) ) {
+			$file_name = "Saga/$name.php";
+			$handler_name = "Saga_$name";
+			fluid_log( "Handle. $name. Created: $handler_name" );
+			require_once $file_name;
+
+			$data = array( '_sagaId' => uniqid(),
+							'_complete' => false,
+							'_file_name' => $file_name,
+							'_handler_name'=> $handler_name );
+
+			$handler = new $handler_name( $this, $bus, $data );
+			$bus->sagaId = $data['_sagaId'];
+			$handler->Handle( $msg );
+			if ( !$handler->isComplete() )
+				file_put_contents( "/tmp/" . $bus->appName . "-" . $data['_sagaId'] . ".dat", serialize( $handler->getData() ) );
+
+
+		} elseif ( is_file( "MessageHandler/$name.php" ) ) {
 			require_once "MessageHandler/$name.php";
 
 			$handler_name = "MessageHandler_$name";
-			$handler = new $handler_name( $this );
+			fluid_log( "Handle. $handler_name" );
+			$handler = new $handler_name( $this, $bus );
 			$handler->Handle( $msg );
 		} elseif ( is_dir( "MessageHandler/$name/" ) ) {
 			$list = glob( "MessageHandler/$name/*" );
@@ -170,7 +205,8 @@ class Fluid {
 				require_once "MessageHandler/$name/" . $info['filename'] . ".php";
 
 				$handler_name = "MessageHandler_$name" . "_" . $info['filename'];
-				$handler = new $handler_name( $this );
+				fluid_log( "Handle. $handler_name" );
+				$handler = new $handler_name( $this, $bus );
 				$handler->Handle( $msg );
 				
 
@@ -205,6 +241,11 @@ class Fluid {
 
 	function Send( $xml ) {
 		Fluid_Bus::get()->Send( $xml );
+	}
+
+
+	function Reply( $xml ) {
+		Fluid_Bus::get()->Reply( $xml );
 	}
 }
 

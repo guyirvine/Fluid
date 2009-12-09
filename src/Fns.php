@@ -1,6 +1,6 @@
 <?php
 function fluid_log( $string, $filename="/tmp/log" ) {
-        if ( $GLOBALS['logging'] == 1 )
+        if ( isset( $GLOBALS['logging'] ) && $GLOBALS['logging'] == 1 )
                 file_put_contents( $filename, "$string\n", FILE_APPEND );
 }
 
