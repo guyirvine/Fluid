@@ -26,6 +26,11 @@ class Fluid_Bus {
 
 
 	private function localSend( $to, $xml ) {
+		if ( isset( $GLOBALS['testing'] ) ) {
+			$GLOBALS['Bus.Send'][] = $xml->getName();
+			return;
+		}
+
 		$buffer = $xml->asXML();
 		$parts = explode( "\n", $buffer, 2 );
 
@@ -78,7 +83,7 @@ class Fluid_Bus {
 			f()->connection->commitTransaction();
 			$this->from = "";
 			$this->sagaId = null;
-		} catch ( NoDataFoundException $e ) {
+		} catch ( Fluid_NoDataFoundException $e ) {
 			break;
 		}
 

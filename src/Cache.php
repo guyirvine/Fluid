@@ -35,7 +35,7 @@ abstract class Fluid_Cache
 			$_data = $this->connection->queryForValue( "SELECT data FROM cache_tbl WHERE key = $1", array( $key ) );
 			return unserialize( $_data );
 
-		} catch ( NoDataFoundException $e ) {
+		} catch ( Fluid_NoDataFoundException $e ) {
 			$data = call_user_func_array(array($this, "Regenerate"), $params);
 		}
 		
