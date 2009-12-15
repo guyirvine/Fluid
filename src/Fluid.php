@@ -103,11 +103,6 @@ class Fluid {
 		$name = array_shift( $params );
 
 
-		if ( isInTestingMode() ) {
-			$GLOBALS['Fluid']['State'][] = $name;
-			return;
-		}
-
 		require_once "StateChangeHandler/$name.php";
 
 
