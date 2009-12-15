@@ -11,6 +11,7 @@ function fluid_error_handler($errno, $errstr, $errfile, $errline) {
 
 
 	if ( isset( $GLOBALS['testing'] ) ) {
+		debug_print_backtrace();
 		die( "\n\n$errfile($errline). $errstr\n\n" );
 	}
 
