@@ -6,8 +6,8 @@ class Test_===Name===
 {
 
 	public function setUp() {
+		$_POST=array();
 		f()->connection->execute( "BEGIN", array() );
-
 		f()->connection->execute( "INSERT INTO ===name===_tbl( id, name ) VALUES ( -1, 'pre-name' )", array() );
 
 	}
