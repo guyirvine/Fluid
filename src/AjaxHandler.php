@@ -59,16 +59,16 @@ abstract class Fluid_AjaxHandler
 
 
 		switch( $command ) {
+			case 'DELETE':
+				return isset( $_POST['delete'] );
+				break;
+
 			case 'CREATE':
 				return ( isset( $_POST['submit'] ) && !isset( $_POST[$param_name] ) );
 				break;
 
 			case 'UPDATE':
 				return ( isset( $_POST['submit'] ) && isset( $_POST[$param_name] ) );
-				break;
-
-			case 'DELETE':
-				return isset( $_GET['delete'] );
 				break;
 
 			default:
@@ -78,11 +78,11 @@ abstract class Fluid_AjaxHandler
 
 
 	function Run() {
-		if ( $this->c('UPDATE' ) ) {
-			$this->Update();
-
-		} elseif ( $this->c('DELETE') ) {
+		if ( $this->c('DELETE') ) {
 			$this->Delete();
+
+		} elseif ( $this->c('UPDATE' ) ) {
+			$this->Update();
 
 		} elseif ( $this->c('CREATE') ) {
 			$this->Create();
