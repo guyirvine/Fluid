@@ -211,3 +211,11 @@ function fluid_pipeline( $pipeline, $input, $params=null ) {
 	
 	return $input;
 }
+
+
+function isInTestingMode() {
+	return isset( 	$GLOBALS['testing'] );
+}
+function putInTestingMode() {
+	$GLOBALS['testing'] = 1;
+}

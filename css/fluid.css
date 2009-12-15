@@ -1,0 +1,281 @@
+body {
+	font-family: sans serif, Trebuchet MS;
+
+}
+
+input.submit {
+	padding: 6px 12px;
+}
+
+input.date {
+	width: 100px;
+}
+
+#system-menu {
+	text-align: left;
+	border-bottom: 1px solid #015092;
+	padding-bottom: 3px;
+	font-size: 12px;
+}
+
+
+#system-menu ul {
+	display: inline;
+	padding: 0px;
+}
+
+#system-menu li {
+	display: inline;
+	list-style: none;
+	padding-left: 4px;
+	font-size: small;
+}
+
+
+#menu {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+}
+
+#menu ul {
+	display: inline;
+	padding: 0px;
+}
+
+#menu li {
+	display: inline;
+	list-style: none;
+	padding-left: 4px;
+	font-size: small;
+}
+
+
+#fluid-ui-list div.title {
+    color: #444444;
+}
+
+#fluid-ui-list span.title,   {
+    color: #999999;
+}
+
+#fluid-ui-list div.head  {
+    border: 1px outset #DDDDDD;
+    background-color: #DDDDDD;
+	position: relative;
+}
+#fluid-ui-list div.head:hover {
+    background-color: #EEEEEE;
+}
+
+
+#fluid-ui-list div.body  {
+    background-color: white;
+}
+
+#fluid-ui-list {
+    padding: 9px;
+/*    background-color: grey;*/
+    border: 1px solid black;
+	position: relative;
+}
+
+#fluid-ui-list div.title {
+    padding: 6px;
+}
+
+#fluid-ui-list span.title {
+    color: #777777;
+    font-size: smaller;
+}
+
+#fluid-ui-list div.detail {
+    position: absolute;
+    right: 5px;
+    top: 7px;
+    text-align: right;
+    font-size: small;
+    color: #444444;
+}
+
+#fluid-ui-list div.body {
+    display: none;
+    padding-top: 6px;
+    padding-left: 12px;
+    padding-bottom: 12px;
+    font-size: small;
+    border-top: 1px solid midnightblue;
+    border-bottom: 1px solid midnightblue;
+}
+
+#fluid-ui-list div.selected {
+    border: 1px solid #5788C0;
+}
+
+
+/* INLINE */
+#inlinePopup {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+}
+
+#inlinePopupContent {
+        margin: 0 auto;   /* align for good browsers */
+        text-align: left; /* counter the body center */
+        width: 752px;
+        width: 800px;
+        padding: 15px;
+}
+
+#inlinePopup .inlinePopupTitle {
+        position: relative;
+        margin: auto;
+        background-color: #5788C0;
+        border: 3px outset #015092;
+        border-bottom: 1px solid #015092;
+        width: 500px;
+        top: 50px;
+        color: white;
+        font-size: 16px;
+        padding: 15px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+}
+
+#inlinePopup .inlinePopupContent {
+        top: 50px;
+        width: 500px;
+        margin: auto;
+        position: relative;
+        text-align: left;
+        background-color: white;
+        border: 3px outset #015092;
+        border-top: none;
+        opacity: 1;
+        padding: 15px;
+}
+
+#inlinePopup .inlinePopupFooter {
+        position: relative;
+        margin: auto;
+        border-top: 1px solid #015092;
+        width: 500px;
+        bottom: -10px;
+        color: white;
+        font-size: 16px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+}
+
+#inlinePopup fieldset {
+        background-color: lightgrey;
+		border: 2px groove lightgrey;
+}
+
+#inlinePopup div.legend {
+        font-weight: bold;
+		color: black;
+}
+
+
+#inlinePopup td.value {
+        color: black;
+}
+
+#inlinePopup td.name {
+        text-align: right;
+        color: #555555;
+}
+
+#inlinePopup div.ui-util-checkbox-list {
+	width: 300px;
+	border: 1px solid black;
+	height: 150px;
+	overflow-y: auto;
+}
+
+
+/* NAVBAR */
+#navbar table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#navbar td {
+	text-align: center;
+	color: #212196;
+	border: 1px solid #015092;
+	padding: 1px;
+}
+
+#navbar td.nav {
+	width: 60px;
+}
+
+#navbar a {
+	display: block;
+	padding: 2px;
+}
+
+#navbar a:hover, #navbar td:hover {
+  color:black; 
+  background-color:LightSteelBlue;
+}
+
+#navbar td.label {
+	text-align: left;
+	background-color: LightGrey;
+	color: black;
+}
+
+#navbar td.selected {
+	background-color: LightSteelBlue;
+	color: black;
+}
+
+
+
+#fluid-multi-column-list {
+    border: none;
+    border-collapse: collapse
+}
+
+#fluid-multi-column-list td {
+  padding: 3px 9px;
+}
+
+#fluid-multi-column-list td.heading {
+  border-bottom: 1px solid midnightblue;
+  color: #555555;
+}
+
+#fluid-multi-column-list td.footer {
+  border-top: 1px solid midnightblue;
+  color: #555555;
+}
+
+
+#fluid-search td.title {
+}
+#fluid-search td.description {
+	width: 60%;
+	padding-bottom: 9px;
+ }
+#fluid-search span.description-note {
+	color: #555555;
+}
+#fluid-search td.link {
+}
+
+.band-1 {
+  background-color: lightgrey;
+}
+
+.band-2 {
+  background-color: LightSteelBlue;
+}
+
+.band-3 {
+  background-color: DodgerBlue;
+}

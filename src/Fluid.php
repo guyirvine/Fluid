@@ -103,6 +103,11 @@ class Fluid {
 		$name = array_shift( $params );
 
 
+		if ( isInTestingMode() ) {
+			$GLOBALS['Fluid']['State'][] = $name;
+			return;
+		}
+
 		require_once "StateChangeHandler/$name.php";
 
 
@@ -125,6 +130,11 @@ class Fluid {
 	function Raise() {
 		$params = func_get_args();
 		$name = array_shift( $params );
+		
+		if ( isInTestingMode() ) {
+			$GLOBALS['Fluid']['Raise'][] = $name;
+			return;
+		}
 
 
 		fluid_log( "Raise: $name. " . print_r( $params, true ) );

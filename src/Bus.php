@@ -1,5 +1,6 @@
 <?php
-require_once "FluidMq/Client.php";
+require_once "Fluid/Fluid.php";
+require_once "Fluid/Mq/Client.php";
 
 class Fluid_Bus {
 
@@ -17,7 +18,7 @@ class Fluid_Bus {
 	function __construct( $app_name ) {
 		$this->sagaId = null;
 		$this->iniFile = parse_ini_file( "/etc/Fluid_Bus/$app_name.ini", true );
-		$this->MqClient = FluidMq_Client::get();
+		$this->MqClient = Fluid_Mq_Client::get();
 
 
 		$this->appName = $app_name;
