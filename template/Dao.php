@@ -6,7 +6,7 @@ class Dao_===Name=== {
 	static function get( $connection, $user_id, $id ) {
 		$sql = "SELECT t.id AS id " .
 				"FROM ===name===_tbl t " .
-				"INNER JOIN ===name===_access_vw a ON ( t.project_id = a.project_id ) " .
+				"INNER JOIN ===name===_access_vw a ON ( t.id = a.===name===_id ) " .
 				"WHERE a.user_id = $1 " .
 				"AND t.id = $2 " .
 				"";

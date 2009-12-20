@@ -21,15 +21,15 @@ abstract class Fluid_AjaxHandler
 	private $name;
 
 	function Create() {
-		throw new Exception();
+		throw new Exception( "Create not handled" );
 	}
 
 	function Update() {
-		throw new Exception();
+		throw new Exception( "Update not handled" );
 	}
 
 	function Delete() {
-		throw new Exception();
+		throw new Exception( "Delete not handled" );
 	}
 
 

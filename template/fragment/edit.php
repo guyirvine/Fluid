@@ -5,7 +5,7 @@ require_once '_init.php';
 function get( Fluid_Db $db, $user_id, $id ) {
         $sql = "SELECT t.id, " .
 			"FROM ===name===_tbl t " .
-               		"JOIN ===name===_access_vw a ON ( t.project_id = a.project_id ) " .
+               		"JOIN ===name===_access_vw a ON ( t.id = a.===name===_id ) " .
                "WHERE a.user_id = $1 " .
 	       "AND t.id = $2 " .
                "";

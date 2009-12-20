@@ -4,10 +4,9 @@ require_once 'Dao/===Name===.php';
 
 
 function get_list( Fluid_Db $db, $user_id ) {
-        $sql = "SELECT t.id, " .
-					"t.name, " .
+        $sql = "SELECT t.id, t.name " .
 			"FROM ===name===_tbl t " .
-               		"JOIN ===name===_access_vw a ON ( t.project_id = a.project_id ) " .
+               		"JOIN ===name===_access_vw a ON ( t.id = a.===name===_id ) " .
                "WHERE a.user_id = $1 " .
                "ORDER BY t.id " .
                "";

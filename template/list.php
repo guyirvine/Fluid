@@ -57,6 +57,8 @@ open_page( '===Name===' );
 Fluid_Ui_List::draw( $list );
 
 ?>
+<br>
+<a href="fragment/===name===/" class="action" onclick="showInlinePopup( 'fragment/===name===.php' );return false;">Add a New ===Name===</a>
 <script>
 
     Event.observe(document, 'keyup', function(event){ if(event.keyCode == Event.KEY_INSERT ) { showInlinePopup( "fragment/===name===.php" ); }});
