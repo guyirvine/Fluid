@@ -26,3 +26,8 @@ write_file( "./src/conf.php", $conf_content );
 
 COPY_RECURSIVE_DIRS( getAbsoluteFluidDirectory() . "/javascript", "./src/" );
 COPY_RECURSIVE_DIRS( getAbsoluteFluidDirectory() . "/css/*", "./src/" );
+
+
+create_directory( "./DomainObject" );
+$user_content = get_content( getAbsoluteFluidTemplateDirectory() . "/User.php", $name );
+write_file( "./src/DomainObject/User.php", $user_content );
