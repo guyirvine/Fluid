@@ -20,7 +20,7 @@ class Fluid_Mq_Client {
 			$queue_id = $this->db->queryForValue( "SELECT q.id FROM queue_tbl q WHERE q.name = $1", array( $queue_name ) );
 
 		} catch( Fluid_NoDataFoundException $e ) {
-			$queue_id = $connection->getNewId( 'queue_seq' );
+			$queue_id = $this->db->getNewId( 'queue_seq' );
 			$this->db->execute( "INSERT INTO queue_tbl( id, name ) VALUES ( $1, $2 ) ", array( $queue_id, $queue_name ) );
 		}
 

@@ -1,6 +1,6 @@
 <?php
 chdir( '../src' );
-require_once '../../../etc/gcis/mq.php';
+require_once '../../../etc/FluidMq.php';
 
 $buffer = <<<EOF
 dropdb $mqdbname
