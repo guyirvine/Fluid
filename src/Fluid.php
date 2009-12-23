@@ -1,7 +1,7 @@
 <?php
 require_once 'Fluid/Fns.php';
 require_once 'Fluid/Bus.php';
-class StateChangeException extends Exception {};
+class Fluid_StateChangeException extends Exception {};
 
 
 class Fluid {
@@ -113,7 +113,7 @@ class Fluid {
 		try {
 			$data = call_user_func_array(array($handler, "ChangeState"), $params);
 		} catch ( Fluid_ConnectionException $e ) {
-			throw new StateChangeException( $e->getMessage() );
+			throw new Fluid_StateChangeException( $e->getMessage() );
 		}
 
 

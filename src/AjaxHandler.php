@@ -3,7 +3,7 @@ require_once 'Fluid/Abstract.php';
 
 
 function fluid_ajax_exception_handler($e) {
-	if ( get_class( $e ) == "StateChangeException" ) {
+	if ( get_class( $e ) == "Fluid_StateChangeException" ) {
 		header( 'x-valid: false' );
 		print $e->getMessage();
 	} else {
