@@ -1,5 +1,6 @@
 <?php
 require_once 'Fluid/Fluid.php';
+require_once 'Fluid/ErrorHandler.php';
 require_once 'Fluid/Db/Pgsql.php';
 require_once '_page.php';
 require_once 'conf.php';
