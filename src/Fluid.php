@@ -122,6 +122,19 @@ class Fluid {
 	}
 
 
+	function Cache( $name ) {
+		require_once "Cache/$name.php";
+
+
+		$handler_name = "Cache_$name";
+		fluid_log( "$handler_name" );
+		$handler = new $handler_name( $this );
+
+
+		return $handler;
+	}
+
+
 	function Raise() {
 		$params = func_get_args();
 		$name = array_shift( $params );
