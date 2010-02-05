@@ -346,7 +346,7 @@ function fluid_ajax_submit( url, _parameters ) {
 	new Ajax.Request( url, {
 		parameters: _parameters,
 		onComplete: function(transport) {
-		
+
 			if ( transport.status == 0 || transport.responseText.indexOf( 'Fatal error' ) > -1 ) {
 				alert( "An unexpected error has occured processing your request.\nPlease try again later. " + transport.responseText );
 				return false;
@@ -375,3 +375,130 @@ function fluid_ajax_delete( url, _parameters ) {
 function fluid_ajax_update( url, _parameters ) {
 	fluid_ajax_submit( url, _parameters );
 }
+
+
+function fluid_set_response( transport ) {
+//	$( 'info' ).innerHTML = $( 'info' ).innerHTML + "Standard function: " + fluid_set_response + "<br>";
+
+}
+
+
+function fluid_get_response( transport ) {
+	
+}
+
+
+function fluid_error( transport ) {
+	if ( transport.status == 0 || transport.responseText.indexOf( 'Fatal error' ) > -1 ) {
+		alert( "An unexpected error has occured processing your request.\nPlease try again later. " + transport.responseText );
+		return true;
+	} else if (transport.getResponseHeader('x-valid') == 'false') { 
+		alert( transport.responseText ); 
+		return true;
+	}
+
+
+	return false;
+}
+
+
+function fluid_ajax( url, _parameters, method_string, success_function, error_function ) {
+
+	new Ajax.Request( url, {
+		method: method_string,
+		parameters: _parameters,
+		onComplete: function(transport) {
+
+//			$( 'info' ).innerHTML = $( 'info' ).innerHTML + "fluid_ajax. 0: " + success_function + "<br>";
+			if ( fluid_error( transport ) ) {
+//				$( 'info' ).innerHTML = $( 'info' ).innerHTML + "fluid_ajax. 1: " + success_function + "<br>";
+				error_function( transport );
+			} else {
+//				$( 'info' ).innerHTML = $( 'info' ).innerHTML + "fluid_ajax. 2: " + success_function + "<br>";
+				success_function( transport );
+//				$( 'info' ).innerHTML = $( 'info' ).innerHTML + "fluid_ajax. 3: " + success_function + "<br>";
+			}
+		}
+	});
+
+
+	return false;
+}
+
+
+function fluid_load_xml( payload ) {
+	var xmlDoc;
+	if (window.DOMParser) {
+		parser=new DOMParser();
+		xmlDoc=parser.parseFromString(payload,"text/xml");
+	}
+		else // Internet Explorer
+	{
+		xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async="false";
+		xmlDoc.loadXML(payload);
+	}
+
+
+	return xmlDoc;
+}
+
+
+function fluid_set( payload, success_function, error_function ) {
+	success_function = typeof(success_function) != 'undefined' ? success_function : fluid_set_response;
+	error_function = typeof(error_function) != 'undefined' ? error_function : fluid_error;
+
+
+	var url = "ajax/fluid.php";
+	var _parameters = "payload=" + payload;
+
+	fluid_ajax( url, _parameters, 'POST', success_function, error_function );
+
+
+	return false;
+}
+
+
+function fluid_get( payload, success_function, error_function ) {
+	success_function = typeof(success_function) != 'undefined' ? success_function : fluid_get_response;
+	error_function = typeof(error_function) != 'undefined' ? error_function : fluid_error;
+
+
+	var url = "ajax/fluid.php";
+	var _parameters = "payload=" + payload;
+
+
+	fluid_ajax( url, _parameters, 'GET', success_function, error_function );
+
+	return false;
+}
+
+
+function fluid_set_json( name, parameters, success_function, error_function ) {
+	success_function = typeof(success_function) != 'undefined' ? success_function : fluid_set_response;
+	error_function = typeof(error_function) != 'undefined' ? error_function : fluid_error;
+
+
+	var url = "ajax/fluid/" + name;
+
+
+	fluid_ajax( url, parameters, 'POST', success_function, error_function );
+
+
+	return false;
+}
+
+
+function fluid_get_json( name, parameters, success_function, error_function ) {
+	success_function = typeof(success_function) != 'undefined' ? success_function : fluid_get_response;
+	error_function = typeof(error_function) != 'undefined' ? error_function : fluid_error;
+
+
+	var url = "ajax/fluid/" + name;
+
+
+	fluid_ajax( url, parameters, 'GET', success_function, error_function );
+
+	return false;
+}
+
