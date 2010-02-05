@@ -12,6 +12,17 @@ class Fluid {
 	private $startTransaction;
 
 
+	private $pathDomainObject;
+	private $pathBuilder;
+	private $pathDao;
+	private $pathStateChangeHandler;
+	private $pathCache;
+	private $pathDomainEventHandler;
+	private $pathSaga;
+	private $pathMessageHandler;
+	private $pathAjaxHandler;
+	
+	
 	function __construct( $connection, $user_id, $startTransaction ) {
 		$this->connection = $connection;
 		$this->user_id = $user_id;
@@ -20,6 +31,15 @@ class Fluid {
 			$connection->startTransaction();
 
 
+		$this->pathDomainObject = "DomainObject";
+		$this->pathBuilder = "Builder";
+		$this->pathDao = "Dao";
+		$this->pathStateChangeHandler = "StateChangeHandler";
+		$this->pathCache = "Cache";
+		$this->pathDomainEventHandler = "DomainEventHandler";
+		$this->pathSaga = "Saga";
+		$this->pathMessageHandler = "MessageHandler";
+		$this->pathAjaxHandler = "AjaxHandler";
 
 
 	}
@@ -54,11 +74,11 @@ class Fluid {
 	}
 
 	function Build( $class_name, $data ) {
-		require_once "DomainObject/$class_name.php";
+		require_once "{$this->pathDomainObject}/$class_name.php";
 
-		if ( is_file( "Builder/$class_name.php" ) ) {
-			require_once "Builder/$class_name.php";
-			$builder_class_name = "Builder_$class_name";
+		if ( is_file( "{$this->pathBuilder}/$class_name.php" ) ) {
+			require_once "{$this->pathBuilder}/$class_name.php";
+			$builder_class_name = "{$this->pathBuilder}_$class_name";
 			$builder = new $builder_class_name();
 			$obj = $builder->build( $data );
 		} else {
@@ -69,10 +89,10 @@ class Fluid {
 	}
 
 	function __call( $name, $arguments ) {
-		require_once "Dao/$name.php";
+		require_once "{$this->pathDao}/$name.php";
 
 
-		$dao_class_name = "Dao_$name";
+		$dao_class_name = "{$this->pathDao}_$name";
 		$dao = new $dao_class_name();
 		$params[] = $this->connection;
 		$params[] = $this->user_id;
@@ -103,10 +123,10 @@ class Fluid {
 		$name = array_shift( $params );
 
 
-		require_once "StateChangeHandler/$name.php";
+		require_once "{$this->pathStateChangeHandler}/$name.php";
 
 
-		$handler_name = "StateChangeHandler_$name";
+		$handler_name = "{$this->pathStateChangeHandler}_$name";
 		fluid_log( "$handler_name: " . print_r( $params, true ) );
 		$handler = new $handler_name( $this );
 
@@ -123,10 +143,10 @@ class Fluid {
 
 
 	function Cache( $name ) {
-		require_once "Cache/$name.php";
+		require_once "{$this->pathCache}/$name.php";
 
 
-		$handler_name = "Cache_$name";
+		$handler_name = "{$this->pathCache}_$name";
 		fluid_log( "$handler_name" );
 		$handler = new $handler_name( $this );
 
@@ -146,20 +166,20 @@ class Fluid {
 
 
 		fluid_log( "Raise: $name. " . print_r( $params, true ) );
-		if ( is_file( "DomainEventHandler/$name.php" ) ) {
-			require_once "DomainEventHandler/$name.php";
+		if ( is_file( "{$this->pathDomainEventHandler}/$name.php" ) ) {
+			require_once "{$this->pathDomainEventHandler}/$name.php";
 
-			$handler_name = "DomainEventHandler_$name";
+			$handler_name = "{$this->pathDomainEventHandler}_$name";
 			fluid_log( "$handler_name: " . print_r( $params, true ) );
 			$handler = new $handler_name( $this );
 			call_user_func_array(array($handler, "handle"), $params);
-		} elseif ( is_dir( "DomainEventHandler/$name/" ) ) {
-			$list = glob( "DomainEventHandler/$name/*" );
+		} elseif ( is_dir( "{$this->pathDomainEventHandler}/$name/" ) ) {
+			$list = glob( "{$this->pathDomainEventHandler}/$name/*" );
 			foreach( $list as $filename ) {
 				$info = pathinfo( $filename );
-				require_once "DomainEventHandler/$name/" . $info['filename'] . ".php";
+				require_once "{$this->pathDomainEventHandler}/$name/" . $info['filename'] . ".php";
 
-				$handler_name = "DomainEventHandler_$name" . "_" . $info['filename'];
+				$handler_name = "{$this->pathDomainEventHandler}_$name" . "_" . $info['filename'];
 				fluid_log( "$handler_name: " . print_r( $params, true ) );
 				$handler = new $handler_name( $this );
 				call_user_func_array(array($handler, "handle"), $params);
@@ -191,9 +211,9 @@ class Fluid {
 				unlink( "/tmp/" . $bus->appName . "-" . $bus->sagaId . ".dat" );
 			}
 
-		} elseif ( is_file( "Saga/$name.php" ) ) {
-			$file_name = "Saga/$name.php";
-			$handler_name = "Saga_$name";
+		} elseif ( is_file( "{$this->pathSaga}/$name.php" ) ) {
+			$file_name = "{$this->pathSaga}/$name.php";
+			$handler_name = "{$this->pathSaga}_$name";
 			fluid_log( "Handle. $name. Created: $handler_name" );
 			require_once $file_name;
 
@@ -209,20 +229,20 @@ class Fluid {
 				file_put_contents( "/tmp/" . $bus->appName . "-" . $data['_sagaId'] . ".dat", serialize( $handler->getData() ) );
 
 
-		} elseif ( is_file( "MessageHandler/$name.php" ) ) {
-			require_once "MessageHandler/$name.php";
+		} elseif ( is_file( "{$this->pathMessageHandler}/$name.php" ) ) {
+			require_once "{$this->pathMessageHandler}/$name.php";
 
-			$handler_name = "MessageHandler_$name";
+			$handler_name = "{$this->pathMessageHandler}_$name";
 			fluid_log( "Handle. $handler_name" );
 			$handler = new $handler_name( $this, $bus );
 			$handler->Handle( $msg );
-		} elseif ( is_dir( "MessageHandler/$name/" ) ) {
-			$list = glob( "MessageHandler/$name/*" );
+		} elseif ( is_dir( "{$this->pathMessageHandler}/$name/" ) ) {
+			$list = glob( "{$this->pathMessageHandler}/$name/*" );
 			foreach( $list as $filename ) {
 				$info = pathinfo( $filename );
-				require_once "MessageHandler/$name/" . $info['filename'] . ".php";
+				require_once "{$this->pathMessageHandler}/$name/" . $info['filename'] . ".php";
 
-				$handler_name = "MessageHandler_$name" . "_" . $info['filename'];
+				$handler_name = "{$this->pathMessageHandler}_$name" . "_" . $info['filename'];
 				fluid_log( "Handle. $handler_name" );
 				$handler = new $handler_name( $this, $bus );
 				$handler->Handle( $msg );
@@ -240,10 +260,10 @@ class Fluid {
 			$parts = pathinfo( $_SERVER['REQUEST_URI'] );
 			$name = ucfirst( $parts['filename'] );
 		}
-		require_once "AjaxHandler/$name.php";
+		require_once "{$this->pathAjaxHandler}/$name.php";
 
 
-		$handler_name = "AjaxHandler_$name";
+		$handler_name = "{$this->pathAjaxHandler}_$name";
 		fluid_log( "$handler_name: " );
 		$handler = new $handler_name( $this, $name );
 
