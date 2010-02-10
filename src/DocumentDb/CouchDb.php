@@ -1,8 +1,5 @@
 <?php
-
-class CouchDbException extends Exception {};
-class NoDocumentFoundException extends CouchDbException {};
-class DocumentConflictException extends CouchDbException {};
+require_once 'Fluid/DocumentDb.php';
 
 /*
 $tuple['_id'] = $id;
@@ -10,7 +7,8 @@ $tuple['payload'] = $payload;
 $tuple['_rev'] = $get_tuple['body']['_rev'];
 */
 
-class Fluid_CouchDb {
+class Fluid_DocumentDb_CouchDb 
+	implements Fluid_DocumentDb {
 
 	private $host;
 	private $port;
