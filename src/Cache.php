@@ -6,23 +6,36 @@ abstract class Fluid_Cache
 	extends Fluid_Abstract {
 
 
-	function Put( $key, $data ) {
-		$this->Expire( $key );
-
-		$sql = "INSERT INTO cache_tbl( key, created, data ) VALUES ( $1, $2, $3 ) ";
-		$params = array( $key, 
-						strftime( "%e %b %Y %r" ), 
-						serialize( $data ) );
-	
-		$this->connection->execute( $sql, $params );
+	function __get( $name ) {
+		switch( $name ) {
+			case 'cacheStore':
+				return $this->fluid->cacheStore;
+			default:
+				return parent::__get( $name );
+		}
 	}
 
 
+	protected function Put( $key, $data ) {
+		$this->Expire( $key );
+
+		$this->cacheStore->put( $key, $data );
+	}
+
+
+	function _Expire( $key ) {
+		foreach( $this->cacheStore->getDependencyList( $key ) as $dep_key ) {
+			$this->_Expire( $dep_key );
+			$this->cacheStore->removeDependencyList( $key );
+			$this->cacheStore->delete( $key );
+		}
+		
+	}
+
 	function Expire() {
 		$params = func_get_args();
-		$key = call_user_func_array(array($this, "MakeKey"), $params);
-
-		$this->connection->execute( "DELETE FROM cache_tbl WHERE key = $1", array( $key ) );
+		$key = call_user_func_array(array($this, "MakeKey"), $params );
+		$this->_Expire( $key );
 	}
 
 
@@ -32,14 +45,15 @@ abstract class Fluid_Cache
 			$key = call_user_func_array(array($this, "MakeKey"), $params);
 
 
-			$_data = $this->connection->queryForValue( "SELECT data FROM cache_tbl WHERE key = $1", array( $key ) );
-			return unserialize( $_data );
+			$_data = $this->cacheStore->get( $key );
+			return  $_data;
 
 		} catch ( Fluid_NoDataFoundException $e ) {
 			$data = call_user_func_array(array($this, "Regenerate"), $params);
+			$this->Put( $key, $data );
 		}
-		
-		
+
+
 		return $data;
 	}
 

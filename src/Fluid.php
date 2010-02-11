@@ -10,6 +10,7 @@ class Fluid {
 	private $connection;
 	private $user_id;
 	private $startTransaction;
+	public $cacheStore;
 
 
 	private $pathDomainObject;
@@ -21,8 +22,8 @@ class Fluid {
 	private $pathSaga;
 	private $pathMessageHandler;
 	private $pathAjaxHandler;
-	
-	
+
+
 	function __construct( $connection, $user_id, $startTransaction ) {
 		$this->connection = $connection;
 		$this->user_id = $user_id;
@@ -59,9 +60,11 @@ class Fluid {
 				return $this->user_id;
 			case 'loggedInUser':
 				return $this->User( $this->user_id );
+			case 'cacheStore':
+				return $this->cacheStore;
 
 			default:
-				throw new Exception();
+				throw new Exception( "Property: $name, not found." );
 		}
 	}
 
