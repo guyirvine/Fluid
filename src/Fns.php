@@ -51,9 +51,19 @@ function s() {
 
 
 function p( $name ) {
+	if ( !isset( $_POST[$name] ) ) {
+		fluid_log( "Post variable, $name, not found." );
+		throw new Fluid_NoDataFoundException( "Post variable, $name, not found." );
+	}
+
 	return $_POST[$name];
 }
 function g( $name ) {
+	if ( !isset( $_GET[$name] ) ) {
+		fluid_log( "Get variable, $name, not found." );
+		throw new Fluid_NoDataFoundException( "Get variable, $name, not found." );
+	}
+
 	return $_GET[$name];
 }
 

@@ -21,15 +21,15 @@ abstract class Fluid_AjaxHandler
 	private $name;
 
 	function Create() {
-		throw new Exception( "Create not handled" );
+		throw new Exception( "Create not handled in: " . get_class( $this ) );
 	}
 
 	function Update() {
-		throw new Exception( "Update not handled" );
+		throw new Exception( "Update not handled in: " . get_class( $this ) );
 	}
 
 	function Delete() {
-		throw new Exception( "Delete not handled" );
+		throw new Exception( "Delete not handled in: " . get_class( $this ) );
 	}
 
 
@@ -41,6 +41,11 @@ abstract class Fluid_AjaxHandler
 
 	function url() {
 		return strtolower( $this->name ) . ".php";
+	}
+
+
+	function returnValue() {
+		return $this->url();
 	}
 
 
@@ -79,21 +84,33 @@ abstract class Fluid_AjaxHandler
 
 	function Run() {
 		if ( $this->c('DELETE') ) {
+			fluid_log( "AjaxHandler.Run: Delete" );
 			$this->Delete();
 
 		} elseif ( $this->c('UPDATE' ) ) {
+			fluid_log( "AjaxHandler.Run: Update" );
 			$this->Update();
 
 		} elseif ( $this->c('CREATE') ) {
+			fluid_log( "AjaxHandler.Run: Create" );
 			$this->Create();
 
+		} else {
+			$param_name = $this->getParamName();
+			$isset_submit = isset( $_POST['submit'] );
+			$isset_param_name = isset( $_POST[$param_name] );
+			fluid_log( "AjaxHandler.Run: Unknown. " . get_class( $this ) . ". " . 
+						"param_name: $param_name. " .
+						"isset( _POST['submit'] ): $isset_submit. " .
+						"isset( _POST[param_name] ): $isset_param_name " .
+						"" );
 		}
 
 
 		if ( isset( $GLOBALS['testing'] ) ) {
-			$GLOBALS['redirect'] = $this->url();
+			$GLOBALS['redirect'] = $this->returnValue();
 		} else {
-			print $this->url();
+			print $this->returnValue();
 			$this->connection->execute( 'COMMIT', array() );
 		}
 	}

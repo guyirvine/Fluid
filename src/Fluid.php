@@ -77,6 +77,7 @@ class Fluid {
 	}
 
 	function Build( $class_name, $data ) {
+		fluid_log( "Build: $class_name" );
 		require_once "{$this->pathDomainObject}/$class_name.php";
 
 		if ( is_file( "{$this->pathBuilder}/$class_name.php" ) ) {
@@ -88,10 +89,12 @@ class Fluid {
 			$obj = $this->localBuild( $class_name, $data );
 		}
 
+		fluid_log( "Build: $class_name. Finished" );
 		return $obj;
 	}
 
 	function __call( $name, $arguments ) {
+		fluid_log( "__call: $name" );
 		require_once "{$this->pathDao}/$name.php";
 
 
@@ -124,13 +127,14 @@ class Fluid {
 	function State() {
 		$params = func_get_args();
 		$name = array_shift( $params );
+		fluid_log( "State: $name" );
 
 
 		require_once "{$this->pathStateChangeHandler}/$name.php";
 
 
 		$handler_name = "{$this->pathStateChangeHandler}_$name";
-		fluid_log( "$handler_name: " . print_r( $params, true ) );
+//		fluid_log( "$handler_name: " . print_r( $params, true ) );
 		$handler = new $handler_name( $this );
 
 		try {
@@ -141,11 +145,13 @@ class Fluid {
 
 
 
+		fluid_log( "State: $name. Finished" );
 		return $data;
 	}
 
 
 	function Cache( $name ) {
+		fluid_log( "Cache: $name" );
 		require_once "{$this->pathCache}/$name.php";
 
 
@@ -161,6 +167,7 @@ class Fluid {
 	function Raise() {
 		$params = func_get_args();
 		$name = array_shift( $params );
+		fluid_log( "Raise: $name" );
 		
 		if ( isInTestingMode() ) {
 			$GLOBALS['Fluid']['Raise'][] = $name;
@@ -168,7 +175,7 @@ class Fluid {
 		}
 
 
-		fluid_log( "Raise: $name. " . print_r( $params, true ) );
+//		fluid_log( "Raise: $name. " . print_r( $params, true ) );
 		if ( is_file( "{$this->pathDomainEventHandler}/$name.php" ) ) {
 			require_once "{$this->pathDomainEventHandler}/$name.php";
 
@@ -197,6 +204,7 @@ class Fluid {
 
 	function Handle( Fluid_Bus $bus, $msg ) {
 		$name = (string)$msg->getName();
+		fluid_log( "Handle: $name" );
 
 
 		if ( !is_null( $bus->sagaId ) && 
@@ -259,6 +267,7 @@ class Fluid {
 
 
 	function Ajax( $name=null ) {
+		fluid_log( "Ajax: $name" );
 		if ( is_null( $name ) ) {
 			$parts = pathinfo( $_SERVER['REQUEST_URI'] );
 			$name = ucfirst( $parts['filename'] );
