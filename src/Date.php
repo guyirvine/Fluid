@@ -4,8 +4,8 @@ class Fluid_Date
 {
 	const FORMAT_DATE = "%d %b %Y";
 	const FORMAT_DATETIME = "%d %b %Y %H:%M";
-	const DISPLAY_FORMAT_DATETIME = "%d %b %Y %l:%M%P";
-	const DISPLAY_FORMAT_TIMESTAMP = "%d %b %Y %l:%M:%S%P";
+	const DISPLAY_FORMAT_DATETIME = "%e %b %Y %l:%M%P";
+	const DISPLAY_FORMAT_TIMESTAMP = "%e %b %Y %l:%M:%S%P";
 
 
     const SECONDS_IN_ONE_HOUR = 3600;
