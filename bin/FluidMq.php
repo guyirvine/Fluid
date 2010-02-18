@@ -52,7 +52,7 @@ $sockets = array();
 /* Initiate connections to all the hosts simultaneously */
 foreach ($msg_list as $id => $msg) {
 	$host=$msg['host'];
-    $s = stream_socket_client("$host:80", $errno, $errstr, $timeout, 
+	$s = stream_socket_client( $host, $errno, $errstr, $timeout, 
         STREAM_CLIENT_ASYNC_CONNECT|STREAM_CLIENT_CONNECT);
     if ($s) {
         $sockets[$id] = $s;
