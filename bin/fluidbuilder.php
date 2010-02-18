@@ -26,7 +26,7 @@ require_once getAbsoluteFluidSrcDirectory() . "/fns.php";
 
 
 if ( $_SERVER['argc'] < 2 )
-	die( "fluidbuilder [init, mobile, pc, cache, domaineventhandler]\n" );
+	die( "fluidbuilder [init, mobile, pc, cache, domaineventhandler, messagehandler]\n" );
 
 
 switch ( $_SERVER['argv'][1] )  {
@@ -47,6 +47,11 @@ switch ( $_SERVER['argv'][1] )  {
 		if ( !is_file( "src/_init.php" ) )
 			die( "run 'fluidbuilder init' first\n" );
 		include getAbsoluteFluidSrcDirectory() . "/domaineventhandler.php";
+		break;
+	case 'messagehandler':
+		if ( !is_file( "src/_init.php" ) )
+			die( "run 'fluidbuilder init' first\n" );
+		include getAbsoluteFluidSrcDirectory() . "/messagehandler.php";
 		break;
 	default:
 		die( "fluidbuilder [init, mobile, pc, cache,domaineventhandler]\n" );
