@@ -7,7 +7,7 @@ class AjaxHandler_===Name===
 	{
 
 	function Update() {
-		f()->===Name=== ()->updateDetail( p('name') );
+		f()->===Name===()->updateDetail( p('name') );
 
 	}
 

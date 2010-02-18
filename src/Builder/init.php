@@ -31,3 +31,7 @@ COPY_RECURSIVE_DIRS( getAbsoluteFluidDirectory() . "/css/*", "./src/" );
 create_directory( "./src/DomainObject" );
 $user_content = get_content( getAbsoluteFluidTemplateDirectory() . "/User.php", $name );
 write_file( "./src/DomainObject/User.php", $user_content );
+
+create_directory( "./src/Dao" );
+$user_content = get_content( getAbsoluteFluidTemplateDirectory() . "/Dao_User.php", $name );
+write_file( "./src/Dao/User.php", $user_content );
