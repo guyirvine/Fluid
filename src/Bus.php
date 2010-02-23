@@ -42,8 +42,13 @@ class Fluid_Bus {
 					$parts[1] .
 				"</msg>";
 
-		fluid_log( "Fluid_Bus.localSend. $to. $msg" );
-		$this->MqClient->SendMsg( $to, $msg );
+		if ( $to === false ) {
+			fluid_log( "Fluid_Bus.localSend. Attemp local receive. $msg" );
+			$this->Receive( $msg );
+		} else {
+			fluid_log( "Fluid_Bus.localSend. $to. $msg" );
+			$this->MqClient->SendMsg( $to, $msg );
+		}
 	}
 
 
@@ -51,8 +56,13 @@ class Fluid_Bus {
 		$msg_name = (string)$xml->getName();
 
 
-		$to = $this->iniFile['Bus'][$msg_name];
-		fluid_log( "Fluid_Bus.Send.$to: $msg_name" );
+		if ( isset( $this->iniFile['Bus'][$msg_name] ) ) {
+			$to = $this->iniFile['Bus'][$msg_name];
+			fluid_log( "Fluid_Bus.Send.$to: $msg_name" );
+		} else {
+			$to = false;
+			fluid_log( "Fluid_Bus.Send.Attempt local receive: $msg_name" );
+		}
 		$this->localSend( $to, $xml );
 
 	}
@@ -101,11 +111,15 @@ class Fluid_Bus {
 		$parts = explode( "\n", $buffer, 2 );
 
 		$msg_name = (string)$xml->getName();
-		$to_string = $this->iniFile['Subscription'][$msg_name];
-		$to_list = explode( ",", $to_string );
+		if ( isset( $this->iniFile['Subscription'][$msg_name] ) ) {
+			$to_string = $this->iniFile['Subscription'][$msg_name];
+			$to_list = explode( ",", $to_string );
 
-		foreach( $to_list as $to ) {
-			$this->localSend( $to, $xml );
+			foreach( $to_list as $to ) {
+				$this->localSend( $to, $xml );
+			}
+		} else {
+			$this->localSend( false, $xml );
 		}
 
 	}
