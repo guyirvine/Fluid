@@ -15,7 +15,12 @@ abstract class Fluid_DomainObject {
 
 
 			default:
-				throw new Exception();
+				$description = "Attribute: $name, not found for DomainObject: " . get_class( $this ) . ".";
+				if ( $name == "connection" ) {
+					$description .= " For connection, try f()->connection.";
+				}
+				fluid_log( $description );
+				throw new Exception( $description );
 		}
 	}
 
