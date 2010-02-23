@@ -1,9 +1,12 @@
 <?php
+require_once 'Fluid/Dao.php';
 
-class Dao_===Name=== {
+
+class Dao_===Name===  
+	extends Fluid_Dao {
 
 
-	static function get( $connection, $user_id, $id ) {
+	static function get( $id ) {
 		$sql = "SELECT t.id AS id " .
 				"FROM ===name===_tbl t " .
 				"INNER JOIN ===name===_access_vw a ON ( t.id = a.===name===_id ) " .
@@ -11,12 +14,12 @@ class Dao_===Name=== {
 				"AND t.id = $2 " .
 				"";
 
-		$params = array( $user_id, $id );
+		$params = array( $this->user_id, $id );
 
-		return $connection->queryForArray( $sql, $params );
+		return $this->connection->queryForArray( $sql, $params );
 	}
 
-	static function update( $connection, $id, $name ) {
+	function update( $id, $name ) {
 		$sql = "UPDATE ===name===_tbl " .
 				"SET name = $1 " .
 				"WHERE id = $2 " .
@@ -25,31 +28,31 @@ class Dao_===Name=== {
 		$params = array( $name, $id );
 
 
-		$connection->execute( $sql, $params );
+		$this->connection->execute( $sql, $params );
 	}
 
 
-	static function insert( $connection, $name ) {
+	function insert( $name ) {
 
-		$id = $connection->getNewId( '===name===_seq' );
+		$id = $this->connection->getNewId( '===name===_seq' );
 		$created = strftime( "%e %b %Y %H:%M:%S" );
 		$sql = 'INSERT INTO ===name===_tbl( id, created, name ) ' .
 				"VALUES ($1, $2, $3 ) ";
 
 		$params = array( $id, $created, $name );
 
-		$connection->execute( $sql, $params );
+		$this->connection->execute( $sql, $params );
 
 		return $id;
 	}
 
 
-	static function delete( $connection, $id ) {
+	function delete( $id ) {
 		$sql = 'DELETE FROM ===name===_tbl WHERE id = $1 ';
 
 		$params = array( $id );
 
-		$connection->execute( $sql, $params );
+		$this->connection->execute( $sql, $params );
 
 	}
 	

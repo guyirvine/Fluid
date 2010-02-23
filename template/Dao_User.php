@@ -1,9 +1,11 @@
 <?php
+require_once 'Fluid/Dao.php';
 
 
-class Dao_User {
+class Dao_User 
+	extends Fluid_Dao {
 
-	static function get( $connection, $id ) {
+	function get( $id ) {
 		$sql = 'SELECT u.id, ' .
 						'u.email_address ' .
 				'FROM user_tbl u ' .
@@ -14,7 +16,7 @@ class Dao_User {
 		$params = array( $id );
 
 
-		return $connection->queryForArray( $sql, $params );
+		return $this->connection->queryForArray( $sql, $params );
 	}
 
 
