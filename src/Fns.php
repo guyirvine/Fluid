@@ -199,20 +199,34 @@ function fluid_array_reduce( $input, $callback, $userdata=null ) {
 }
 
 
-function fluid_pipeline( $pipeline, $input, $params=null ) {
-	foreach( $pipeline as $row ) {
-		switch( $row[0] ) {
+function fluid_pipeline() {
+	$args = func_get_args();
+	$input = array_shift( $args );
+	$params = array_shift( $args );
+
+
+	while ( count( $args ) > 0 ) {
+		$switch = array_shift( $args );
+		
+		switch( $switch ) {
 			case 'F': //filter
-				$input = fluid_array_filter( $input, $row[1], $params );
+				$callback = array_shift( $args );
+				$input = fluid_array_filter( $input, $callback, $params );
 				break;
 			case 'M': //map
-				$input = fluid_array_map( $row[1], $input, $params );
+				$callback = array_shift( $args );
+				$input = fluid_array_map( $callback, $input, $params );
 				break;
 			case 'T': //flatten
 				$input = flatten( $input );
 				break;
 			case 'R': //reduce
-				$input = array_reduce( $input, $row[1] );
+				$callback = array_shift( $args );
+				$input = array_reduce( $input, $callback );
+				break;
+			case 'W': //Walk
+				$callback = array_shift( $args );
+				array_walk( $input, $callback, $params );
 				break;
 			default:
 				throw new Exception( 'Type: ' . $row[0] . ', not supported.' );
