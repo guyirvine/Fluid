@@ -95,23 +95,14 @@ class Fluid {
 
 	function __call( $name, $arguments ) {
 		fluid_log( "__call: $name" );
-		require_once "{$this->pathDao}/$name.php";
-
-
-		$dao_class_name = "{$this->pathDao}_$name";
-		$dao = new $dao_class_name();
-		$params[] = $this->connection;
-		$params[] = $this->user_id;
+		$dao = $this->Dao( $name );
+		
 		if ( count( $arguments ) == 0 ) {
 			$param = strtolower( $name ) . "_id";
-			if ( isset( $_POST[$param] ) ) {
-				$params[] = $_POST[$param];
-			}
-		} else {
-			$params = array_merge( $params, $arguments );
+			$arguments = a( p($param) );
 		}
 
-		$data = call_user_func_array(array($dao, "get"), $params);
+		$data = call_user_func_array(array($dao, "get"), $arguments);
 
 
 		return $this->build( $name, $data );
@@ -156,6 +147,20 @@ class Fluid {
 
 
 		$handler_name = "{$this->pathCache}_$name";
+		fluid_log( "$handler_name" );
+		$handler = new $handler_name( $this );
+
+
+		return $handler;
+	}
+
+
+	function Dao( $name ) {
+		fluid_log( "Dao: $name" );
+		require_once "{$this->pathDao}/$name.php";
+
+
+		$handler_name = "{$this->pathDao}_$name";
 		fluid_log( "$handler_name" );
 		$handler = new $handler_name( $this );
 
