@@ -1,6 +1,5 @@
 <?php
 require_once '_pc.php';
-require_once 'Dao/===Name===.php';
 
 
 function get_list( Fluid_Db $db, $user_id ) {
@@ -37,7 +36,7 @@ open_page( '===Name===' );
 			<tr class='filter-tr'>
 				<td class='filter-entry band=1'><?php print $row['id'] ?></td>
 				<td class='filter-entry band-2'><?php print $row['name'] ?></td>
-				<td><a href="fragment/===name===/$===name===_id" class="action" onclick="showInlinePopup( 'fragment/===name===.php?===name===_id=<?php print $row['id'] ?>' );return false;">edit</a></td>
+				<td><a href="fragment/===name===/$===name===_id" class="action" onclick="showInlinePopup( 'fragment/===name===.php?===name===_id=<?php print $row['id'] ?>' );return false;">edit &raquo;</a></td>
 			</tr>
 		<?php } ?>
 		<tr>
