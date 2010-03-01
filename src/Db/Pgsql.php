@@ -143,7 +143,7 @@ class Fluid_Db_Pgsql
 	}
 
 
-	function execute( $sql, $params ) {
+	function execute( $sql, $params, $expected_affected_rows=null ) {
 		$result = @pg_query_params( $this->connection, $sql, $params );
 		if ( !$result ) {
 			$message = pg_last_error( $this->connection );
@@ -151,6 +151,11 @@ class Fluid_Db_Pgsql
 				throw new Fluid_DuplicateKeyException( $message );
 			} else {
 				throw new Fluid_ConnectionException( "$message. sql: $sql. " . print_r( $params, true ) );
+			}
+		} elseif ( $expected_affected_rows != null ) {
+			$affected_rows = pg_affected_rows( $result );
+			if ( $affected_rows != $expected_affected_rows ) {
+				throw new Fluid_OptimisticLockException();
 			}
 		}
 	}

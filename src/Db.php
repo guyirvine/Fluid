@@ -4,6 +4,7 @@ class Fluid_ConnectionException extends Exception {}
 class Fluid_DuplicateKeyException extends Exception {}
 class Fluid_NoDataFoundException extends Exception {};
 class Fluid_TooManyRowsException extends Exception {};
+class Fluid_OptimisticLockException extends Exception {};
 
 interface Fluid_Db
 {
