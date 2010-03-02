@@ -1,6 +1,7 @@
 <?php
 require_once "/etc/FluidMq.php";
 require_once "Fluid/ErrorHandler.php";
+require_once "Fluid/Fluid.php";
 
 
 function msgs_pending( $db ) {
@@ -24,7 +25,8 @@ function msgs_pending( $db ) {
 function async_sending( $end_time, $db ) {
 
 	$host=$GLOBALS['local_mq_host'];
-	$clients = array( "bugtraq" );
+//	$clients = array( "bugtraq" );
+	$clients = $GLOBALS['mq_client_list'];
 	while( time() < $end_time ) {
 
 		if ( msgs_pending( $db ) ) {
@@ -65,9 +67,10 @@ function async_sending( $end_time, $db ) {
 							fclose($r);
 							unset($sockets[$id]);
 						} else {
+							fluid_log( "mq.bin.Data: client: " . $clients[$id] . ": $data" );
 		print "mq.bin.daemon.Data: $data\n";
 							if ( strpos( $data, 'error' ) !== false ) {
-								fluid_log( "mq.bin.daemon.Data: $data" );
+								print "mq.bin.Data: client: " . $clients[$id] . ": $data";
 							}
 
 							fclose($r);

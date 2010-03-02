@@ -107,7 +107,7 @@ class Fluid_Mq_Receiver {
 		if ( $queue == "" ) {
 			if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 				$parts = explode( "/", $_SERVER['REQUEST_URI'] );
-				$name = $parts[1];
+				$queue = $parts[1];
 			} else {
 				throw new Fluid_NoDataFoundException( "Queue Name not specified" );
 			}
