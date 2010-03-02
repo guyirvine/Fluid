@@ -82,7 +82,7 @@ function async_sending( $end_time, $db ) {
 						$id = array_search($w, $sockets);
 
 						if ( $status[$id] != "waiting for response" ) {
-							$uri = "/" . $clients[$id] . "/FluidMq2.php";
+							$uri = "/" . $clients[$id] . "/FluidMq.php";
 //							$req =  "GET $uri HTTP/1.1\r\n".
 //									"Host: $host\n". "User-Agent: FluidMq\r\n\r\n";
 //							fwrite($w, $req);
