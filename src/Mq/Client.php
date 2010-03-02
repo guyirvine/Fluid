@@ -25,9 +25,9 @@ class Fluid_Mq_Client {
 		}
 
 
-		$sql = "INSERT INTO inbox_tbl( id, queue_id, data, created ) " .
-			    "VALUES ( NEXTVAL( 'inbox_seq' ), $1, $2, $3 ) ";
-		$params = array( $queue_id, $msg, strftime( "%e %b %Y %H:%M", time() ) );
+		$sql = "INSERT INTO inbox_tbl( id, queue_id, queue_name, data, created ) " .
+			    "VALUES ( NEXTVAL( 'inbox_seq' ), $1, $2, $3, $4 ) ";
+		$params = array( $queue_id, $queue_name, $msg, strftime( "%e %b %Y %H:%M", time() ) );
 
 		$this->db->execute( $sql, $params );
 

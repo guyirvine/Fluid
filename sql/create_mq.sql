@@ -21,10 +21,12 @@ CREATE TABLE outbox_tbl (
 CREATE TABLE inbox_tbl (
 	id BIGINT NOT NULL,
 	queue_id BIGINT NOT NULL,
+	queue_name VARCHAR(2048) NOT NULL,
 	created TIMESTAMP NOT NULL,
 	data VARCHAR(4096) NOT NULL,
 	dont_process_until TIMESTAMP,
 	processed_yn CHAR(1) NOT NULL DEFAULT 'N',
+	processed_at TIMESTAMP,
 	version INT DEFAULT 0,
 	CONSTRAINT inbox_pk PRIMARY KEY ( id ),
 	CONSTRAINT inbox_queue_fk FOREIGN KEY ( queue_id ) REFERENCES queue_tbl ( id ) );
