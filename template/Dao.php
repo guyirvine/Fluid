@@ -6,7 +6,7 @@ class Dao_===Name===
 	extends Fluid_Dao {
 
 
-	static function get( $id ) {
+	function get( $id ) {
 		$sql = "SELECT t.id AS id " .
 				"FROM ===name===_tbl t " .
 				"INNER JOIN ===name===_access_vw a ON ( t.id = a.===name===_id ) " .
