@@ -1,6 +1,5 @@
 <?php
 require_once 'Fluid/StateChangeHandler.php';
-require_once 'Dao/===Name===.php';
 
 
 class StateChangeHandler_Create===Name===
@@ -8,8 +7,7 @@ class StateChangeHandler_Create===Name===
 
 
 	function ChangeState( $name ) {
-		$id = Dao_===Name===::insert( $this->connection,
-									$name );
+		$id = $this->fluid->Dao( '===Name===' )->insert( $name );
 
 
 		return $id;
