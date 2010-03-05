@@ -11,6 +11,10 @@ class Fluid {
 	private $user_id;
 	private $startTransaction;
 	public $cacheStore;
+	
+	
+	private $testingModeYn;
+	private $test_log;
 
 
 	private $pathDomainObject;
@@ -30,6 +34,8 @@ class Fluid {
 		$this->startTransaction = $startTransaction;
 		if ( $startTransaction )
 			$connection->startTransaction();
+		$this->testingModeYn = 'N';
+		$this->test_log = array();
 
 
 		$this->pathDomainObject = "DomainObject";
@@ -43,6 +49,21 @@ class Fluid {
 		$this->pathAjaxHandler = "AjaxHandler";
 
 
+	}
+
+
+	function isInTestingMode() {
+		return ( $this->testingModeYn == 'Y' );
+	}
+	function putInTestingMode() {
+		$this->testingModeYn = 'Y';
+	}
+	private function logForTest( $type, $handler_name, $params=null, $returnValue=null ) {
+		if ( $this->isInTestingMode() )
+			$this->test_log[] = array( "type"=>$type, "handler"=>$handler_name, "params"=>$params, "returnValue"=>$returnValue );
+	}
+	function getTestLog() {
+		return $this->test_log;
 	}
 
 
@@ -96,12 +117,11 @@ class Fluid {
 	function __call( $name, $arguments ) {
 		fluid_log( "__call: $name" );
 		$dao = $this->Dao( $name );
-		
+
 		if ( count( $arguments ) == 0 ) {
 			$param = strtolower( $name ) . "_id";
 			$arguments = a( p($param) );
 		}
-
 		$data = call_user_func_array(array($dao, "get"), $arguments);
 
 
@@ -128,12 +148,14 @@ class Fluid {
 //		fluid_log( "$handler_name: " . print_r( $params, true ) );
 		$handler = new $handler_name( $this );
 
+
 		try {
 			$data = call_user_func_array(array($handler, "ChangeState"), $params);
+			$this->logForTest( "State", $handler_name, $params, $data );
 		} catch ( Fluid_ConnectionException $e ) {
+			$this->logForTest( "State", $handler_name, $params, null );
 			throw new Fluid_StateChangeException( $e->getMessage() );
 		}
-
 
 
 		fluid_log( "State: $name. Finished" );
@@ -163,6 +185,7 @@ class Fluid {
 		$handler_name = "{$this->pathDao}_$name";
 		fluid_log( "$handler_name" );
 		$handler = new $handler_name( $this );
+		$this->logForTest( "Test", $handler_name, null, null );
 
 
 		return $handler;
