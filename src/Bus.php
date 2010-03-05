@@ -17,7 +17,13 @@ class Fluid_Bus {
 
 	function __construct( $app_name ) {
 		$this->sagaId = null;
-		$this->iniFile = parse_ini_file( "/etc/Fluid_Bus/$app_name.ini", true );
+		$_ini_file_path = "/etc/Fluid_Bus/$app_name.ini";
+		if ( is_file( $_ini_file_path ) ) {
+			$this->iniFile = parse_ini_file( $_ini_file_path, true );
+		} else {
+			$this->iniFile = array();
+		}
+		
 		$this->MqClient = Fluid_Mq_Client::get();
 
 
