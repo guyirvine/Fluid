@@ -20,6 +20,7 @@ class Fluid {
 	private $pathDomainObject;
 	private $pathBuilder;
 	private $pathDao;
+	private $pathFetchingStrategy;
 	private $pathStateChangeHandler;
 	private $pathCache;
 	private $pathDomainEventHandler;
@@ -40,6 +41,7 @@ class Fluid {
 
 		$this->pathDomainObject = "DomainObject";
 		$this->pathBuilder = "Builder";
+		$this->pathFetchingStrategy = "FetchingStrategy";
 		$this->pathDao = "Dao";
 		$this->pathStateChangeHandler = "StateChangeHandler";
 		$this->pathCache = "Cache";
@@ -114,18 +116,24 @@ class Fluid {
 		return $obj;
 	}
 
+
 	function __call( $name, $arguments ) {
 		fluid_log( "__call: $name" );
-		$dao = $this->Dao( $name );
+		if ( is_file( "{$this->pathFetchingStrategy}/$name.php" ) ) {
+			require_once "{$this->pathFetchingStrategy}/$name.php";
+			$fetchingstrategy_class_name = "{$this->pathFetchingStrategy}_$name";
+			$fetchingStrategy = new $fetchingstrategy_class_name( $this );
+			return call_user_func_array(array($fetchingStrategy, "get"), $arguments);
+		} else {
+			$dao = $this->Dao( $name );
 
-		if ( count( $arguments ) == 0 ) {
-			$param = strtolower( $name ) . "_id";
-			$arguments = a( p($param) );
+			if ( count( $arguments ) == 0 ) {
+				$param = strtolower( $name ) . "_id";
+				$arguments = a( p($param) );
+			}
+			$data = call_user_func_array(array($dao, "get"), $arguments);
+			return $this->build( $name, $data );
 		}
-		$data = call_user_func_array(array($dao, "get"), $arguments);
-
-
-		return $this->build( $name, $data );
 	}
 
 

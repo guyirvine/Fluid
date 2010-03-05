@@ -24,9 +24,9 @@ function getAbsoluteFluidTemplateDirectory() {
 
 require_once getAbsoluteFluidSrcDirectory() . "/fns.php";
 
-
+$usage_string = "fluidbuilder [init, mobile, pc, cache, domaineventhandler, messagehandler, fluidmq, fetchingstrategy]\n";
 if ( $_SERVER['argc'] < 2 )
-	die( "fluidbuilder [init, mobile, pc, cache, domaineventhandler, messagehandler, fluidmq]\n" );
+	die( $usage_string );
 
 
 switch ( $_SERVER['argv'][1] )  {
@@ -53,12 +53,17 @@ switch ( $_SERVER['argv'][1] )  {
 			die( "run 'fluidbuilder init' first\n" );
 		include getAbsoluteFluidSrcDirectory() . "/messagehandler.php";
 		break;
-        case 'fluidmq':
-                if ( !is_file( "src/_init.php" ) )
-                        die( "run 'fluidbuilder init' first\n" );
-                include getAbsoluteFluidSrcDirectory() . "/fluidmq.php";
-                break;
+	case 'fluidmq':
+		if ( !is_file( "src/_init.php" ) )
+			die( "run 'fluidbuilder init' first\n" );
+		include getAbsoluteFluidSrcDirectory() . "/fluidmq.php";
+		break;
+	case 'fetchingstrategy':
+		if ( !is_file( "src/_init.php" ) )
+			die( "run 'fluidbuilder init' first\n" );
+		include getAbsoluteFluidSrcDirectory() . "/fetchingstrategy.php";
+		break;
 
 	default:
-		die( "fluidbuilder [init, mobile, pc, cache,domaineventhandler]\n" );
+		die( $usage_string );
 }
