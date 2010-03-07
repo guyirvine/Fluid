@@ -24,4 +24,10 @@ abstract class Fluid_DomainObject {
 		}
 	}
 
+
+	function _add( $obj ) {
+		$obj_name = get_class( $obj );
+		$list_name = strtolower( $obj_name ) . "_list";
+		array_push( $this->$list_name, $obj );
+	}
 }
