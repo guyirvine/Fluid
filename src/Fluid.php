@@ -17,6 +17,9 @@ class Fluid {
 	private $test_log;
 
 
+	private $built_object_list;
+
+
 	private $pathDomainObject;
 	private $pathBuilder;
 	private $pathDao;
@@ -37,6 +40,9 @@ class Fluid {
 			$connection->startTransaction();
 		$this->testingModeYn = 'N';
 		$this->test_log = array();
+
+
+		$this->built_object_list=array();
 
 
 		$this->pathDomainObject = "DomainObject";
@@ -100,7 +106,15 @@ class Fluid {
 	}
 
 	function Build( $class_name, $data ) {
+		if ( isset( $data['id'] ) ) { $object_key =  $class_name . "_" . $data['id']; }
 		fluid_log( "Build: $class_name" );
+
+
+		if ( isset( $object_key ) &&
+				isset( $this->built_object_list[$object_key] ) ) {
+			fluid_log( "Build: $class_name already built. Finished" );
+			return $this->built_object_list[$object_key];
+		}
 		require_once "{$this->pathDomainObject}/$class_name.php";
 
 		if ( is_file( "{$this->pathBuilder}/$class_name.php" ) ) {
@@ -112,6 +126,8 @@ class Fluid {
 			$obj = $this->localBuild( $class_name, $data );
 		}
 
+
+		if ( isset( $object_key ) ) { $this->built_object_list[$object_key] = $obj; }
 		fluid_log( "Build: $class_name. Finished" );
 		return $obj;
 	}
