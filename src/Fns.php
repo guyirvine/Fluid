@@ -80,7 +80,7 @@ function fluid_flatten( $array, $depth=null ) {
 	$list = array();
 	foreach( $array as $item ) {
 		if ( is_array( $item ) ) {
-			$_list = flatten( $item );
+			$_list = fluid_flatten( $item );
 			$list = array_merge( $list, $_list );
 		} else {
 			if ( !is_null( $item ) )
@@ -204,6 +204,9 @@ function fluid_pipeline() {
 	$input = array_shift( $args );
 	$params = array_shift( $args );
 
+	if ( is_array( $args[0] ) )
+		$args = $args[0];
+
 
 	while ( count( $args ) > 0 ) {
 		$switch = array_shift( $args );
@@ -218,7 +221,7 @@ function fluid_pipeline() {
 				$input = fluid_array_map( $callback, $input, $params );
 				break;
 			case 'T': //flatten
-				$input = flatten( $input );
+				$input = fluid_flatten( $input );
 				break;
 			case 'R': //reduce
 				$callback = array_shift( $args );
@@ -229,7 +232,7 @@ function fluid_pipeline() {
 				array_walk( $input, $callback, $params );
 				break;
 			default:
-				throw new Exception( 'Type: ' . $row[0] . ', not supported.' );
+				throw new Exception( "Type: $switch, not supported." );
 		}
 	}
 	

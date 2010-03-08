@@ -20,16 +20,16 @@ class Fluid {
 	private $built_object_list;
 
 
-	private $pathDomainObject;
-	private $pathBuilder;
-	private $pathDao;
-	private $pathFetchingStrategy;
-	private $pathStateChangeHandler;
-	private $pathCache;
-	private $pathDomainEventHandler;
-	private $pathSaga;
-	private $pathMessageHandler;
-	private $pathAjaxHandler;
+	public $pathDomainObject;
+	public $pathBuilder;
+	public $pathDao;
+	public $pathFetchingStrategy;
+	public $pathStateChangeHandler;
+	public $pathCache;
+	public $pathDomainEventHandler;
+	public $pathSaga;
+	public $pathMessageHandler;
+	public $pathAjaxHandler;
 
 
 	function __construct( $connection, $user_id, $startTransaction ) {
@@ -73,6 +73,10 @@ class Fluid {
 	function getTestLog() {
 		return $this->test_log;
 	}
+	function turnOnLogging() {
+		$GLOBALS['logging'] = 1;
+	}
+	
 
 
 	function __destruct() {
@@ -128,8 +132,23 @@ class Fluid {
 
 
 		if ( isset( $object_key ) ) { $this->built_object_list[$object_key] = $obj; }
-		fluid_log( "Build: $class_name. Finished" );
+		fluid_log( "Build: $class_name. Finished. " );
 		return $obj;
+	}
+
+
+	function getData( $name, $arguments ) {
+		fluid_log( "getData: $name" );
+		$dao = $this->Dao( $name );
+
+		if ( count( $arguments ) == 0 ) {
+			$param = strtolower( $name ) . "_id";
+			$arguments = a( p($param) );
+		}
+		$data = call_user_func_array(array($dao, "get"), $arguments );
+
+		fluid_log( "getData: $name. Finished. " );
+		return $data;
 	}
 
 
@@ -141,13 +160,8 @@ class Fluid {
 			$fetchingStrategy = new $fetchingstrategy_class_name( $this );
 			return call_user_func_array(array($fetchingStrategy, "get"), $arguments);
 		} else {
-			$dao = $this->Dao( $name );
+			$data = $this->getData( $name, $arguments );
 
-			if ( count( $arguments ) == 0 ) {
-				$param = strtolower( $name ) . "_id";
-				$arguments = a( p($param) );
-			}
-			$data = call_user_func_array(array($dao, "get"), $arguments);
 			return $this->build( $name, $data );
 		}
 	}
@@ -352,7 +366,7 @@ class Fluid {
 }
 
 
-function f( $connection=null, $user_id=null, $startTransaction=true ) {
+function f( $connection=null, $user_id=null, $startTransaction=true, $class_name="Fluid"  ) {
 	static $fluid=null;
 	if ( is_null( $fluid ) ) {
 		if ( is_null( $connection ) )
@@ -361,8 +375,8 @@ function f( $connection=null, $user_id=null, $startTransaction=true ) {
 		if ( is_null( $user_id ) )
 			throw new Exception();
 
-		
-		$fluid = new Fluid( $connection, $user_id, $startTransaction );
+
+		$fluid = new $class_name( $connection, $user_id, $startTransaction );
 	}
 
 	return $fluid;
