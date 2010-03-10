@@ -17,7 +17,8 @@ class Fluid {
 	private $test_log;
 
 
-	private $built_object_list;
+	private $cache_fetched_objects;
+	private $fetched_object_list;
 
 
 	public $pathDomainObject;
@@ -42,8 +43,9 @@ class Fluid {
 		$this->test_log = array();
 
 
-		$this->built_object_list=array();
-
+		$this->cache_fetched_objects=true;//This holds with a CQRS system, as we are either reading or writing, not both.
+		$this->fetched_object_list=array();
+		
 
 		$this->pathDomainObject = "DomainObject";
 		$this->pathBuilder = "Builder";
@@ -75,6 +77,9 @@ class Fluid {
 	}
 	function turnOnLogging() {
 		$GLOBALS['logging'] = 1;
+	}
+	function turnOffFetchedObjectCaching() {
+		$this->cache_fetched_objects=false;
 	}
 	
 
@@ -110,19 +115,13 @@ class Fluid {
 	}
 
 	function Build( $class_name, $data ) {
-		if ( isset( $data['id'] ) ) { $object_key =  $class_name . "_" . $data['id']; }
 		fluid_log( "Build: $class_name" );
 
+		$path_from_class_name = str_replace( "_", "/", $class_name );
+		require_once "{$this->pathDomainObject}/$path_from_class_name.php";
 
-		if ( isset( $object_key ) &&
-				isset( $this->built_object_list[$object_key] ) ) {
-			fluid_log( "Build: $class_name already built. Finished" );
-			return $this->built_object_list[$object_key];
-		}
-		require_once "{$this->pathDomainObject}/$class_name.php";
-
-		if ( is_file( "{$this->pathBuilder}/$class_name.php" ) ) {
-			require_once "{$this->pathBuilder}/$class_name.php";
+		if ( is_file( "{$this->pathBuilder}/$path_from_class_name.php" ) ) {
+			require_once "{$this->pathBuilder}/$path_from_class_name.php";
 			$builder_class_name = "{$this->pathBuilder}_$class_name";
 			$builder = new $builder_class_name();
 			$obj = $builder->build( $data );
@@ -131,7 +130,6 @@ class Fluid {
 		}
 
 
-		if ( isset( $object_key ) ) { $this->built_object_list[$object_key] = $obj; }
 		fluid_log( "Build: $class_name. Finished. " );
 		return $obj;
 	}
@@ -152,18 +150,38 @@ class Fluid {
 	}
 
 
-	function __call( $name, $arguments ) {
-		fluid_log( "__call: $name" );
-		if ( is_file( "{$this->pathFetchingStrategy}/$name.php" ) ) {
-			require_once "{$this->pathFetchingStrategy}/$name.php";
+	function Get( $name, $arguments ) {
+		$object_key =  $name . "_" . serialize( $arguments );
+		fluid_log( "Get: $object_key" );
+
+		if ( isset( $this->fetched_object_list[$object_key] ) ) {
+			fluid_log( "Get: $name already fetched. Finished" );
+			return $this->fetched_object_list[$object_key];
+		}
+
+		$path_from_name = str_replace( "_", "/", $name );
+		if ( is_file( "{$this->pathFetchingStrategy}/$path_from_name.php" ) ) {
+			require_once "{$this->pathFetchingStrategy}/$path_from_name.php";
 			$fetchingstrategy_class_name = "{$this->pathFetchingStrategy}_$name";
 			$fetchingStrategy = new $fetchingstrategy_class_name( $this );
-			return call_user_func_array(array($fetchingStrategy, "get"), $arguments);
+			$obj = call_user_func_array(array($fetchingStrategy, "get"), $arguments);
 		} else {
 			$data = $this->getData( $name, $arguments );
 
-			return $this->build( $name, $data );
+			$obj = $this->build( $name, $data );
 		}
+
+
+		fluid_log( "Get: $name already fetched. Finished" );
+		if ( $this->cache_fetched_objects )
+			$this->fetched_object_list[$object_key] = $obj;
+
+		return $obj;
+	}
+
+
+	function __call( $name, $arguments ) {
+		return $this->Get( $name, $arguments );
 	}
 
 
