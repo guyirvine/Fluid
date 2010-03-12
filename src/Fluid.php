@@ -151,6 +151,11 @@ class Fluid {
 
 
 	function Get( $name, $arguments ) {
+		foreach( $arguments as $key=>$value ) {
+			if ( is_numeric( $value ) ) {
+				$arguments[$key]=(string)$value;
+			}
+		}
 		$object_key =  $name . "_" . serialize( $arguments );
 		fluid_log( "Get: $object_key" );
 
