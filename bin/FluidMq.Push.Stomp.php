@@ -30,7 +30,7 @@ function get_all( Fluid_Stomp $stomp ) {
 }
 
 
-function async_sending( $end_time, $db ) {
+function async_sending( $end_time, $stomp ) {
 
 while( time() < $end_time ) {
 
@@ -38,7 +38,6 @@ while( time() < $end_time ) {
 	$msg_list = array();
 
 
-	$stomp = new Fluid_Stomp();
 	$stomp->connect();
 	$list = get_all( $stomp );
 	$stomp->disconnect();
@@ -163,6 +162,10 @@ if ($pid == -1) {
 */
 
 $end_time = time() + ( 60 * 60 );
-$db = getMqConnection();
 
-async_sending( $end_time, $db );
+$stomp = new Fluid_Stomp();
+if ( isset( $GLOBALS['local_stomp_port'] ) )
+	$stomp->port = $GLOBALS['local_stomp_port'];
+
+
+async_sending( $end_time, $stomp );
