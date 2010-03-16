@@ -32,7 +32,8 @@ function get_all( Fluid_Stomp $stomp ) {
 
 function async_sending( $end_time, $stomp ) {
 
-while( time() < $end_time ) {
+//while( time() < $end_time ) {
+while( true ) {
 
 	$processed_msgs = false;
 	$msg_list = array();
