@@ -13,6 +13,8 @@ class Fluid_Mq_Client_Stomp
 
 	function __construct() {
 		$this->stomp = new Fluid_Stomp();
+		if ( isset( $GLOBALS['local_stomp_port'] ) )
+			$this->stomp->port = $GLOBALS['local_stomp_port'];
 	}
 
 
