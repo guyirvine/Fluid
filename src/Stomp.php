@@ -13,11 +13,11 @@ class Fluid_Stomp {
 	function __construct() {
 		$this->hostname = "localhost";
 		$this->port = 61613;
+		$this->socket = new Fluid_Socket_Client();
 	}
 
 
 	function connect() {
-		$this->socket = new Fluid_Socket_Client();
 		$this->socket->connect( $this->hostname, $this->port );
 $buffer =<<<EOF
 CONNECT

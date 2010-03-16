@@ -1,6 +1,6 @@
 <?php
 require_once "Fluid/Fluid.php";
-require_once "Fluid/Mq/Client.php";
+require_once "Fluid/Mq/Client/Stomp.php";
 
 class Fluid_Bus {
 
@@ -23,8 +23,8 @@ class Fluid_Bus {
 		} else {
 			$this->iniFile = array();
 		}
-		
-		$this->MqClient = Fluid_Mq_Client::get();
+
+		$this->MqClient = new Fluid_Mq_Client_Stomp();
 
 
 		$this->appName = $app_name;
@@ -53,7 +53,7 @@ class Fluid_Bus {
 			$this->Receive( $msg );
 		} else {
 			fluid_log( "Fluid_Bus.localSend. $to. $msg" );
-			$this->MqClient->SendMsg( $to, $msg );
+			$this->MqClient->Send( $to, $msg );
 		}
 	}
 

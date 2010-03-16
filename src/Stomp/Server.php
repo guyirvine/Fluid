@@ -8,7 +8,6 @@ require_once "Fluid/Stomp/Server/Handler/Send.php";
 require_once "Fluid/Stomp/Server/Handler/Subscribe.php";
 require_once "Fluid/Stomp/Server/Handler/Receipt.php";
 
-$GLOBALS['logging'] = 1;
 
 class Fluid_Stomp_Server
 		extends Fluid_Socket_Server {
@@ -22,10 +21,15 @@ class Fluid_Stomp_Server
 	private $handlerReceipt;
 
 
+	private $unhandledData;
+
 	function __construct() {
 		$this->hostname = "localhost";
-//		$this->port = 61613;
-		$this->port = 10001;
+		$this->port = 61613;
+//		$this->port = 10001;
+		$this->unhandledData = "";
+
+
 		
 		$queueManager = new Fluid_Queue_Manager_FileBased();
 
@@ -47,21 +51,55 @@ class Fluid_Stomp_Server
 	}
 
 
-	function processData( $data, $client ) {
-		$msg = new Fluid_Stomp_Msg( $data );
-		switch ( $msg->command ) {
-			case "SEND":
-				$this->handlerSend->Handle( $msg, $client );
-				break;
-			case "SUBSCRIBE":
-				$this->handlerSubscribe->Handle( $msg, $client );
-				break;
+	function splitOnNullCharacter( $data ) {
+		$buffer = $this->unhandledData . $data;
+		$token = "\0";
 
-			default:
-				print_r( $msg );
-				print "\n===\n\n";
+		$b="";$list = array();$length = strlen($buffer);
+		for( $i=0;$i<$length;$i++ ) {
+			if ( $buffer[$i] == $token ) {
+				$list[] = $b;
+				$b = "";
+			} else {
+				$b .= $buffer[$i];
+			}
+
 		}
-		$this->handlerReceipt->Handle( $msg, $client );
+//		$this->unhandledData = $b;
+		$this->unhandledData = "";
+		$list[] = $b;
+
+		return $list;
+	}
+
+	function processData( $data, $client ) {
+
+		$list = $this->splitOnNullCharacter( $data );
+		foreach( $list as $buffer ) {
+			if ( strlen( $buffer ) < 3 )
+				continue;
+
+
+			$msg = new Fluid_Stomp_Msg( $buffer );
+			switch ( $msg->command ) {
+				case "SEND":
+					$this->handlerSend->Handle( $msg, $client );
+					break;
+				case "SUBSCRIBE":
+					$this->handlerSubscribe->Handle( $msg, $client );
+					break;
+
+				case "CONNECT":
+				case "DISCONNECT":
+					break;
+
+				default:
+	//				print_r( $msg );
+	//				print "\n===\n\n";
+					print $msg->command . "\n";
+			}
+			$this->handlerReceipt->Handle( $msg, $client );
+		}
 	}
 
 }

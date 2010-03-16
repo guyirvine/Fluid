@@ -6,12 +6,17 @@ class Fluid_Db_Pgsql
 	implements Fluid_Db
 {
 
-	
+
 	private $connection;
-	
-	
-	function __construct( $connection_string ) {
-		$this->connection = pg_connect( $connection_string );
+
+
+	function __construct( $input ) {
+		if ( is_resource( $input ) ) {
+			$this->connection = $input;
+		} else {
+			$this->connection = pg_connect( $input );
+		}
+
 
 		$status = pg_connection_status($this->connection);
 		if ( $status !== PGSQL_CONNECTION_OK ) {

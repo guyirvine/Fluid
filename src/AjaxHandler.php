@@ -111,7 +111,6 @@ abstract class Fluid_AjaxHandler
 			$GLOBALS['redirect'] = $this->returnValue();
 		} else {
 			print $this->returnValue();
-			$this->connection->execute( 'COMMIT', array() );
 		}
 	}
 
