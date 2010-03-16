@@ -1,6 +1,6 @@
 <?php
 require_once "Fluid/Fluid.php";
-require_once "Fluid/Mq/Client/Stomp.php";
+require_once "Fluid/Mq/Client/Http.php";
 
 class Fluid_Bus {
 
@@ -24,7 +24,7 @@ class Fluid_Bus {
 			$this->iniFile = array();
 		}
 
-		$this->MqClient = new Fluid_Mq_Client_Stomp();
+		$this->MqClient = new Fluid_Mq_Client_Http();
 
 
 		$this->appName = $app_name;
