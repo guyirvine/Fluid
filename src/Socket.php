@@ -19,6 +19,7 @@ class Fluid_Socket {
 		
 		$result = socket_shutdown( $socket );
 		socket_close( $socket );
+		unset( $socket );
 		
 		if ( $result === false )
 			throw new Fluid_SocketException( "Exception on socket_shutdown" );

@@ -27,7 +27,7 @@ class Fluid_Socket_Client {
 	function disconnect() {
 		$this->fluidSocket->disconnect( $this->socket );
 	}
-	
+
 	function write($data ) {
 		$this->fluidSocket->write( $this->socket, $data );
 	}

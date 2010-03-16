@@ -1,4 +1,6 @@
 <?php
+class Fluid_HttpException extends Exception {}
+
 function fluid_log( $string, $filename="/tmp/log" ) {
         if ( isset( $GLOBALS['logging'] ) && $GLOBALS['logging'] == 1 )
                 file_put_contents( $filename, "$string\n", FILE_APPEND );
@@ -74,6 +76,34 @@ function i( $expression, $value ) {
 function i_nn( $variable, $value ) {
 	return i( !is_null( $variable ), $value );
 }
+
+function fluid_http_post($url, $data, $optional_headers = null) {
+	$params = array('http' => array(
+					'method' => 'POST',
+					'content' => $data ));
+	if ( strpos( strtolower( $optional_headers ), 'content-type' ) === false )
+		$optional_headers = "Content-type: application/x-www-form-urlencoded\r\n" . $optional_headers;
+	$params['http']['header'] = $optional_headers;
+
+
+	$ctx = stream_context_create($params);
+	$fp = @fopen($url, 'rb', false, $ctx);
+	if (!$fp) {
+		throw new Fluid_HttpException("Problem with $url, $php_errormsg");
+	}
+	$response = @stream_get_contents($fp);
+	if ($response === false) {
+		throw new Fluid_HttpException("Problem reading data from $url, $php_errormsg");
+	}
+
+	
+	$ret = @stream_get_meta_data( $fp );
+	$ret['body'] = $response;
+
+	return $ret;
+}
+
+
 
 
 function fluid_flatten( $array, $depth=null ) {

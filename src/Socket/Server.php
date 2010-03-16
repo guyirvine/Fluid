@@ -85,6 +85,7 @@ class Fluid_Socket_Server {
 				if ($data === false) {
 					// remove client for $clients array
 					$key = array_search($read_sock, $clients);
+					socket_close( $clients[$key] );
 					unset($clients[$key]);
 					echo "client disconnected.\n";
 					// continue to the next client to read from, if any
