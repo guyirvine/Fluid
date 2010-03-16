@@ -12,8 +12,8 @@ require_once "Fluid/Stomp/Server/Handler/Receipt.php";
 class Fluid_Stomp_Server
 		extends Fluid_Socket_Server {
 
-	private $hostname;
-	private $port;
+	public $hostname;
+	public $port;
 
 	private $queueManager;
 	private $handlerSend;
