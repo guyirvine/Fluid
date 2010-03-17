@@ -248,7 +248,7 @@ class Fluid_Date
 	}
 
 	function startOfWeek() {
-		return $this->subtractDays( $this->dayNumber );
+		return $this->subtractDays( $this->dayOfWeek );
 	}
 
 
