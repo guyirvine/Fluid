@@ -8,9 +8,7 @@ class StateChangeHandler_Update===Name===
 
 
 	function ChangeState( $id, $name ) {
-		Dao_===Name===::update( $this->connection,
-							$id, 
-							$name );
+		$this->fluid->Dao( '===Name===' )->update( $id, $name );
 
 	}
 
