@@ -3,10 +3,15 @@ class Fluid_HttpException extends Exception {}
 
 function fluid_log( $string, $filename="/tmp/log" ) {
         if ( isset( $GLOBALS['logging'] ) && $GLOBALS['logging'] == 1 )
-                file_put_contents( $filename, "$string\n", FILE_APPEND );
+                file_put_contents( $filename, strftime( "%d %b %Y %H:%M" ) . "$string\n", FILE_APPEND );
 }
 
 
+function fluid_log_memusage( $string, $filename="/tmp/log.memusage" ) {
+        if ( isset( $GLOBALS['log_memusage'] ) && $GLOBALS['log_memusage'] == 1 )
+		file_put_contents( $filename, "$string. " . memory_get_usage(true) . "\n", FILE_APPEND );
+
+}
 
 function c( $command ) {
 	$parts = pathinfo( $_SERVER['REQUEST_URI'] );
