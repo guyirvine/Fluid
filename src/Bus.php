@@ -95,9 +95,9 @@ class Fluid_Bus {
 			$this->from = (string)$mqMsg['from'];
 			$this->sagaId = isset( $mqMsg['sagaId'] ) ? $mqMsg['sagaId'] : null;
 			fluid_log( "Fluid_Bus.Receive. from: " . $this->from . ". $buffer" );
-			f()->connection->startTransaction();
+//			f()->connection->startTransaction();
 			f()->Handle( $this, $msg );
-			f()->connection->commitTransaction();
+//			f()->connection->commitTransaction();
 			$this->from = "";
 			$this->sagaId = null;
 		} catch ( Fluid_NoDataFoundException $e ) {

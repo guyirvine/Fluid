@@ -5,7 +5,13 @@ require_once 'Fluid/Abstract.php';
 function fluid_ajax_exception_handler($e) {
 	if ( get_class( $e ) == "Fluid_StateChangeException" ) {
 		header( 'x-valid: false' );
+		header( 'x-message: ' . $e->getMessage() );
 		print $e->getMessage();
+	} elseif ( get_class( $e ) == "Fluid_BusinessException" ) {
+		header( 'x-valid: false' );
+		header( 'x-message: ' . $e->getMessage() );
+		print $e->getMessage();
+	
 	} else {
 		header( 'x-valid: false' );
 		print "Unexpected Error: " . $e->getMessage();

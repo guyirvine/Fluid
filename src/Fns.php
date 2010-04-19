@@ -2,8 +2,11 @@
 class Fluid_HttpException extends Exception {}
 
 function fluid_log( $string, $filename="/tmp/log" ) {
-        if ( isset( $GLOBALS['logging'] ) && $GLOBALS['logging'] == 1 )
-                file_put_contents( $filename, strftime( "%d %b %Y %H:%M" ) . "$string\n", FILE_APPEND );
+//	print "Logging: " . $GLOBALS['logging'] . "<br>\n";
+        if ( isset( $GLOBALS['logging'] ) && $GLOBALS['logging'] == 1 ) {
+//                file_put_contents( $filename, strftime( "%d %b %Y %H:%M" ) . "$string\n", FILE_APPEND );
+		syslog( LOG_ERR, $string );
+	}
 }
 
 
@@ -280,4 +283,51 @@ function isInTestingMode() {
 }
 function putInTestingMode() {
 	$GLOBALS['testing'] = 1;
+}
+
+
+function moveItemInList( $list, $oldSeqNum, $newSeqNum ) {
+	if ( $oldSeqNum == $newSeqNum )
+		return $list;
+	if ( $newSeqNum < 1 )
+		$newSeqNum = 1;
+
+
+	$oldSeqNum--;
+	$newSeqNum--;
+	$itemToBeMoved = $list[$oldSeqNum];
+	$new_list=array();
+	foreach( $list as $seq=>$item ) {
+		if ( $oldSeqNum == $seq )
+			continue;
+
+
+		switch ( true ) {
+			case ( $seq < $newSeqNum ):
+				$new_list[] = $item;
+				break;
+			case ( $seq > $newSeqNum ):
+				$new_list[] = $item;
+				break;
+
+
+			case ( $newSeqNum < $oldSeqNum ):
+				$new_list[] = $itemToBeMoved;
+				$new_list[] = $item;
+				$itemToBeMoved = null;
+				break;
+			case ( $newSeqNum > $oldSeqNum ):
+				$new_list[] = $item;
+				$new_list[] = $itemToBeMoved;
+				$itemToBeMoved = null;
+				break;
+
+		}
+				
+			
+	}
+	if ( !is_null( $itemToBeMoved ) )
+		$new_list[] = $itemToBeMoved;
+
+	return $new_list;
 }

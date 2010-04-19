@@ -1,7 +1,8 @@
 <?php
 require_once 'Fluid/Fns.php';
 require_once 'Fluid/Bus.php';
-class Fluid_StateChangeException extends Exception {};
+class Fluid_BusinessException extends Exception {};
+class Fluid_StateChangeException extends Fluid_BusinessException {};
 
 
 class Fluid {
@@ -206,7 +207,6 @@ class Fluid {
 
 
 		$handler_name = "{$this->pathStateChangeHandler}_$name";
-//		fluid_log( "$handler_name: " . print_r( $params, true ) );
 		$handler = new $handler_name( $this );
 
 

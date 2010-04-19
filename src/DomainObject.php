@@ -19,8 +19,8 @@ abstract class Fluid_DomainObject {
 				if ( $name == "connection" ) {
 					$description .= " For connection, try f()->connection.";
 				}
-				fluid_log( $description );
-				throw new Exception( $description );
+				fluid_log( $description  );
+				throw new Exception( $description . print_r( debug_backtrace(), true ) );
 		}
 	}
 
