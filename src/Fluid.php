@@ -3,6 +3,7 @@ require_once 'Fluid/Fns.php';
 require_once 'Fluid/Bus.php';
 class Fluid_BusinessException extends Exception {};
 class Fluid_StateChangeException extends Fluid_BusinessException {};
+class Fluid_NoDataFoundException extends Exception {};
 
 
 class Fluid {
@@ -16,6 +17,8 @@ class Fluid {
 	
 	private $testingModeYn;
 	private $test_log;
+	public $deliverStateChanges;
+	public $deliverDomainEvents;
 
 
 	private $cache_fetched_objects;
@@ -42,6 +45,8 @@ class Fluid {
 			$connection->startTransaction();
 		$this->testingModeYn = 'N';
 		$this->test_log = array();
+		$this->deliverStateChanges = true;
+		$this->deliverDomainEvents = true;
 
 
 		$this->cache_fetched_objects=true;//This holds with a CQRS system, as we are either reading or writing, not both.
@@ -66,12 +71,17 @@ class Fluid {
 	function isInTestingMode() {
 		return ( $this->testingModeYn == 'Y' );
 	}
+	function resetForTesting() {
+		$this->test_log = array();
+	}
 	function putInTestingMode() {
 		$this->testingModeYn = 'Y';
+		$this->resetForTesting();
 	}
 	private function logForTest( $type, $handler_name, $params=null, $returnValue=null ) {
-		if ( $this->isInTestingMode() )
+		if ( $this->isInTestingMode() ) {
 			$this->test_log[] = array( "type"=>$type, "handler"=>$handler_name, "params"=>$params, "returnValue"=>$returnValue );
+		}
 	}
 	function getTestLog() {
 		return $this->test_log;
@@ -82,7 +92,10 @@ class Fluid {
 	function turnOffFetchedObjectCaching() {
 		$this->cache_fetched_objects=false;
 	}
-	
+	function turnOffDeliverys() {
+		$this->deliverStateChanges = false;
+		$this->deliverDomainEvents = false;
+	}
 
 
 	function __destruct() {
@@ -90,6 +103,7 @@ class Fluid {
 			$this->connection->commitTransaction();
 
 	}
+
 
 	function __get( $name ) {
 		switch( $name ) {
@@ -211,7 +225,11 @@ class Fluid {
 
 
 		try {
-			$data = call_user_func_array(array($handler, "ChangeState"), $params);
+			if ( $this->deliverStateChanges ) {
+				$data = call_user_func_array(array($handler, "ChangeState"), $params);
+			} else {
+				$data = null;
+			}
 			$this->logForTest( "State", $handler_name, $params, $data );
 		} catch ( Fluid_ConnectionException $e ) {
 			$this->logForTest( "State", $handler_name, $params, null );
@@ -246,7 +264,7 @@ class Fluid {
 		$handler_name = "{$this->pathDao}_$name";
 		fluid_log( "$handler_name" );
 		$handler = new $handler_name( $this );
-		$this->logForTest( "Test", $handler_name, null, null );
+		$this->logForTest( "Dao", $handler_name, null, null );
 
 
 		return $handler;
@@ -257,12 +275,6 @@ class Fluid {
 		$params = func_get_args();
 		$name = array_shift( $params );
 		fluid_log( "Raise: $name" );
-		
-		if ( isInTestingMode() ) {
-			$GLOBALS['Fluid']['Raise'][] = $name;
-			return;
-		}
-
 
 //		fluid_log( "Raise: $name. " . print_r( $params, true ) );
 		if ( is_file( "{$this->pathDomainEventHandler}/$name.php" ) ) {
@@ -271,7 +283,9 @@ class Fluid {
 			$handler_name = "{$this->pathDomainEventHandler}_$name";
 			fluid_log( "$handler_name: " . print_r( $params, true ) );
 			$handler = new $handler_name( $this );
-			call_user_func_array(array($handler, "handle"), $params);
+			if ( $this->deliverDomainEvents )
+				call_user_func_array(array($handler, "handle"), $params);
+			$this->logForTest( "Raise", $handler_name, $params, null );
 		} elseif ( is_dir( "{$this->pathDomainEventHandler}/$name/" ) ) {
 			$list = glob( "{$this->pathDomainEventHandler}/$name/*" );
 			foreach( $list as $filename ) {
@@ -281,7 +295,9 @@ class Fluid {
 				$handler_name = "{$this->pathDomainEventHandler}_$name" . "_" . $info['filename'];
 				fluid_log( "$handler_name: " . print_r( $params, true ) );
 				$handler = new $handler_name( $this );
-				call_user_func_array(array($handler, "handle"), $params);
+				if ( $this->deliverDomainEvents )
+					call_user_func_array(array($handler, "handle"), $params);
+				$this->logForTest( "Raise", $handler_name, $params, null );
 				
 
 			}

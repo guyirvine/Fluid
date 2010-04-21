@@ -3,17 +3,24 @@ require_once 'Fluid/Abstract.php';
 
 
 function fluid_ajax_exception_handler($e) {
+	fluid_log( "fluid_ajax_exception_handler. 1" );
 	if ( get_class( $e ) == "Fluid_StateChangeException" ) {
+		fluid_log( "fluid_ajax_exception_handler. 1.1" );
+		header('HTTP/1.1 200 OK');
 		header( 'x-valid: false' );
 		header( 'x-message: ' . $e->getMessage() );
 		print $e->getMessage();
 	} elseif ( get_class( $e ) == "Fluid_BusinessException" ) {
+		fluid_log( "fluid_ajax_exception_handler. 1.2. (" . headers_sent() . ") " . $e->getMessage() );
+		header( 'x-valid: false' );
+		print $e->getMessage();
+		fluid_log( "fluid_ajax_exception_handler. 1.2.1. " . $e->getMessage() );
+		die();
+
+	} else {
+		fluid_log( "fluid_ajax_exception_handler. 1.3" );
 		header( 'x-valid: false' );
 		header( 'x-message: ' . $e->getMessage() );
-		print $e->getMessage();
-	
-	} else {
-		header( 'x-valid: false' );
 		print "Unexpected Error: " . $e->getMessage();
 	}
 }
@@ -101,6 +108,7 @@ abstract class Fluid_AjaxHandler
 			fluid_log( "AjaxHandler.Run: Create" );
 			$this->Create();
 
+
 		} else {
 			$param_name = $this->getParamName();
 			$isset_submit = isset( $_POST['submit'] );
@@ -116,6 +124,7 @@ abstract class Fluid_AjaxHandler
 		if ( isset( $GLOBALS['testing'] ) ) {
 			$GLOBALS['redirect'] = $this->returnValue();
 		} else {
+			fluid_log( "AjaxHandler.Run: Finished. Return value: " . $this->returnValue() );
 			print $this->returnValue();
 		}
 	}
