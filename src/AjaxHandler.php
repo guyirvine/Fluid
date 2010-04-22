@@ -8,7 +8,7 @@ function fluid_ajax_exception_handler($e) {
 		fluid_log( "fluid_ajax_exception_handler. 1.1" );
 		header('HTTP/1.1 200 OK');
 		header( 'x-valid: false' );
-		header( 'x-message: ' . $e->getMessage() );
+//		header( 'x-message: ' . $e->getMessage() );
 		print $e->getMessage();
 	} elseif ( get_class( $e ) == "Fluid_BusinessException" ) {
 		fluid_log( "fluid_ajax_exception_handler. 1.2. (" . headers_sent() . ") " . $e->getMessage() );
@@ -20,7 +20,7 @@ function fluid_ajax_exception_handler($e) {
 	} else {
 		fluid_log( "fluid_ajax_exception_handler. 1.3" );
 		header( 'x-valid: false' );
-		header( 'x-message: ' . $e->getMessage() );
+//		header( 'x-message: ' . $e->getMessage() );
 		print "Unexpected Error: " . $e->getMessage();
 	}
 }

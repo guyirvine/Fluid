@@ -1,6 +1,26 @@
 <?php
 class Fluid_HttpException extends Exception {}
 
+
+function _fluid_create_hierarchy_from_list( $id_list, $list, $parent_id, $rank, $depth ) {
+	foreach( $list as $key=>$item ) {
+		if ( is_null( $parent_id ) && is_null( $item['parent_id'] ) ||
+				$parent_id == $item['parent_id'] ) {
+			$_rank = "$rank.$key";
+			$id_list[] = array( $key, $_rank, $depth );
+			$id_list = _fluid_create_hierarchy_from_list( $id_list, $list, $item['id'], $_rank, $depth+1 );
+		}
+	}
+
+	
+	return $id_list;
+}
+function fluid_create_hierarchy_from_list( $list, $top_level_parent_id_marker=null ) {
+	$id_list = array();
+	return _fluid_create_hierarchy_from_list( $id_list, $list, $top_level_parent_id_marker, "", 0 );
+}
+
+
 function fluid_log( $string, $filename="/tmp/log" ) {
 //	print "Logging: " . $GLOBALS['logging'] . "<br>\n";
         if ( isset( $GLOBALS['logging'] ) && $GLOBALS['logging'] == 1 ) {
