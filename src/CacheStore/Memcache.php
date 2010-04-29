@@ -1,16 +1,21 @@
 <?php
-require_once 'Fluid/CacheStore.php';
+require_once 'Fluid_ICacheStore_InMemoryDistributed.php';
+
 
 class Fluid_CacheStore_Memcache
-	implements Fluid_CacheStore {
+		implements Fluid_ICacheStore_InMemoryDistributed {
 
 	private $memcache;
 
-	function __construct( $host="localhost", $port="11211" ) {
+
+	function init_single( $host="localhost", $port="11211" ) {
 		$this->host=$host;
 		$this->port=$port;
 		$this->memcache = new Memcache();
 		$this->memcache->connect( $host, $port );
+	}
+	function init_pre_configured( $memcache ) {
+		$this->memcache = $memcache;
 	}
 
 
@@ -19,8 +24,8 @@ class Fluid_CacheStore_Memcache
 	}
 
 
-	function put( $key, $value ) {
-		$this->memcache->set( $key, $value, 0, 60 );
+	function put( $key, $value, $ttl ) {
+		$this->memcache->set( $key, $value, 0, $ttl );
 	}
 
 
@@ -34,6 +39,9 @@ class Fluid_CacheStore_Memcache
 		return $response;
 	}
 
+
+/*
+Need to put in a hasExpired flag.
 
 	function getDependencyList( $from_key ) {
 		$key = "$from_key.dep";
@@ -65,6 +73,6 @@ class Fluid_CacheStore_Memcache
 		$this->memcache->delete( $key );
 	
 	}
-
+*/
 
 }

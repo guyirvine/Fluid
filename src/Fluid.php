@@ -12,7 +12,7 @@ class Fluid {
 	private $connection;
 	private $user_id;
 	private $startTransaction;
-	public $cacheStore;
+	private $cacheStore;
 	
 	
 	private $testingModeYn;
@@ -113,8 +113,7 @@ class Fluid {
 				return $this->user_id;
 			case 'loggedInUser':
 				return $this->User( $this->user_id );
-			case 'cacheStore':
-				return $this->cacheStore;
+
 
 			default:
 				throw new Exception( "Property: $name, not found." );
@@ -386,6 +385,11 @@ class Fluid {
 
 
 		return $handler;
+	}
+
+
+	function addCacheStore( ICacheStore $cacheStore ) {
+		$this->cacheStore[] = $cacheStore;
 	}
 
 

@@ -1,11 +1,18 @@
 <?php
 require_once 'Fluid/CacheStore.php';
+require_once 'Fluid_ICacheStore_InMemoryLocal.php';
+
 
 class Fluid_CacheStore_Apc
-	implements Fluid_CacheStore {
+	implements Fluid_ICacheStore_InMemoryLocal {
 
 
-	function set( $key, $value, $ttl ) {
+	function delete( $key ) {
+		apc_delete( $key );
+	}
+
+
+	function put( $key, $value, $ttl ) {
 		apc_add( $key , $value, $ttl  );
 	}
 
