@@ -6,7 +6,7 @@ interface Fluid_ICacheStore_Persistant
 		extends Fluid_ICacheStore {
 
 
-	function put( $key, $value, $ttl );
+	function put( $key, $value );
 
 
 	function getDependencyList( $from_key );

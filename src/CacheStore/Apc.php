@@ -1,10 +1,9 @@
 <?php
-require_once 'Fluid/CacheStore.php';
-require_once 'Fluid_ICacheStore_InMemoryLocal.php';
+require_once 'Fluid/ICacheStore/InMemoryLocal.php';
 
 
 class Fluid_CacheStore_Apc
-	implements Fluid_ICacheStore_InMemoryLocal {
+		implements Fluid_ICacheStore_InMemoryLocal {
 
 
 	function delete( $key ) {
@@ -21,7 +20,7 @@ class Fluid_CacheStore_Apc
 		$response = apc_fetch( $key );
 
 		if ( $response === false )
-			throw new NoCacheItemFoundException();
+			throw new Fluid_NoDataFoundException();
 
 
 		return $response;

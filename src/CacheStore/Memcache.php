@@ -1,5 +1,5 @@
 <?php
-require_once 'Fluid_ICacheStore_InMemoryDistributed.php';
+require_once 'Fluid/ICacheStore/InMemoryDistributed.php';
 
 
 class Fluid_CacheStore_Memcache
@@ -8,14 +8,20 @@ class Fluid_CacheStore_Memcache
 	private $memcache;
 
 
-	function init_single( $host="localhost", $port="11211" ) {
+	function initSingle( $host="localhost", $port="11211" ) {
 		$this->host=$host;
 		$this->port=$port;
 		$this->memcache = new Memcache();
 		$this->memcache->connect( $host, $port );
+
+
+		return $this;
 	}
 	function init_pre_configured( $memcache ) {
 		$this->memcache = $memcache;
+
+
+		return $this;
 	}
 
 

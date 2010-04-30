@@ -1,5 +1,5 @@
 <?php
-require_once 'Fluid_ICacheStore_InMemoryPersistant.php';
+require_once 'Fluid/ICacheStore/Persistant.php';
 
 
 class Fluid_CacheStore_Plsql
@@ -14,7 +14,11 @@ class Fluid_CacheStore_Plsql
 
 
 	function get( $key ) {
-		return Pgsql::queryForValue( $this->connection, "SELECT data FROM cache_tbl WHERE key = $1", array( $key ) );
+		try {
+			return Pgsql::queryForValue( $this->connection, "SELECT data FROM cache_tbl WHERE key = $1", array( $key ) );
+		} catch ( NoDataFoundException $e ) {
+			throw new Fluid_NoDataFoundException( $e );
+		}
 	}
 
 
@@ -30,10 +34,11 @@ class Fluid_CacheStore_Plsql
 		$sql = "INSERT INTO cache_tbl( key, created, data ) VALUES ( $1, $2, $3 ) ";
 		$params = array( $key, 
 						strftime( "%e %b %Y %r" ), 
-						$data );
+						$value );
 
 
 		Pgsql::execute( $this->connection, $sql, $params );
+
 
 	}
 
@@ -45,7 +50,7 @@ class Fluid_CacheStore_Plsql
 
 
 	function getDependencyList( $from_key ) {
-		return Pgsql::queryForResultSet( $this->connection, "SELECT to_key AS key FROM cachedependency_tbl WHERE from_key = $1", array( $key ) );
+		return Pgsql::queryForResultSet( $this->connection, "SELECT to_key AS key FROM cachedependency_tbl WHERE from_key = $1", array( $from_key ) );
 	}
 
 

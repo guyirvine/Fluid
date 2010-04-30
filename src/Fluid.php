@@ -25,6 +25,9 @@ class Fluid {
 	private $fetched_object_list;
 
 
+	private $cache_list;
+
+
 	public $pathDomainObject;
 	public $pathBuilder;
 	public $pathDao;
@@ -51,6 +54,8 @@ class Fluid {
 
 		$this->cache_fetched_objects=true;//This holds with a CQRS system, as we are either reading or writing, not both.
 		$this->fetched_object_list=array();
+		$this->cacheStore=array();
+		$this->cache_list=array();
 		
 
 		$this->pathDomainObject = "DomainObject";
@@ -113,6 +118,8 @@ class Fluid {
 				return $this->user_id;
 			case 'loggedInUser':
 				return $this->User( $this->user_id );
+			case 'cacheStore':
+				return $this->cacheStore;
 
 
 			default:
@@ -242,6 +249,10 @@ class Fluid {
 
 
 	function Cache( $name ) {
+		if ( isset( $this->cache_list[$name] ) )
+			return $this->cache_list[$name];
+
+
 		fluid_log( "Cache: $name" );
 		require_once "{$this->pathCache}/$name.php";
 
@@ -251,6 +262,7 @@ class Fluid {
 		$handler = new $handler_name( $this );
 
 
+		$this->cache_list[$name] = $handler;
 		return $handler;
 	}
 
@@ -275,7 +287,7 @@ class Fluid {
 		$name = array_shift( $params );
 		fluid_log( "Raise: $name" );
 
-//		fluid_log( "Raise: $name. " . print_r( $params, true ) );
+
 		if ( is_file( "{$this->pathDomainEventHandler}/$name.php" ) ) {
 			require_once "{$this->pathDomainEventHandler}/$name.php";
 
@@ -301,7 +313,7 @@ class Fluid {
 
 			}
 		}
-		
+
 
 	}
 
@@ -388,7 +400,7 @@ class Fluid {
 	}
 
 
-	function addCacheStore( ICacheStore $cacheStore ) {
+	function addCacheStore( Fluid_ICacheStore $cacheStore ) {
 		$this->cacheStore[] = $cacheStore;
 	}
 
