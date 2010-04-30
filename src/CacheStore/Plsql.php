@@ -43,19 +43,20 @@ class Fluid_CacheStore_Plsql
 	}
 
 
-	function getDependentFromCache( $key ) {
-		$this->dependency_list[] = array( $key );
-		return $this->_getFromCache( $key );
-	}
-
-
 	function getDependencyList( $from_key ) {
-		return Pgsql::queryForResultSet( $this->connection, "SELECT to_key AS key FROM cachedependency_tbl WHERE from_key = $1", array( $from_key ) );
+		$_list = Pgsql::queryForResultSet( $this->connection, "SELECT to_key FROM cachedependency_tbl WHERE from_key = $1", array( $from_key ) );
+		$list = array();
+		foreach( $_list as $row ) {
+			$list[] = $row['to_key'];
+		}
+		
+		
+		return $list;
 	}
 
 
 	function addDependency( $from_key, $to_key ) {
-		Pgsql::execute( $this->connection, "INSERT INTO cachedependency_tbl( from_key, to_key ) VALUES ( $1, $2 )", array( $dependency, $key ) );
+		Pgsql::execute( $this->connection, "INSERT INTO cachedependency_tbl( from_key, to_key ) VALUES ( $1, $2 )", array( $from_key, $to_key ) );
 	}
 
 

@@ -8,6 +8,15 @@ abstract class Fluid_Cache
 	extends Fluid_Abstract {
 
 
+	private $dependency_list;
+
+
+	function __construct( Fluid $fluid ) {
+		$this->dependency_list = array();
+		parent::__construct( $fluid );
+	}
+
+
 	function __get( $name ) {
 		switch( $name ) {
 			case 'cacheStore':
@@ -40,17 +49,22 @@ abstract class Fluid_Cache
 		foreach( $this->cacheStore as $cacheStore ) {
 			if ( $this instanceof Fluid_ICache_InMemoryLocal &&
 					$cacheStore instanceof Fluid_ICacheStore_InMemoryLocal ) {
+				fluid_log( "Cache _Expire: ( $key ). " . get_class( $cacheStore ) );
 				$cacheStore->delete( $key );
 			} elseif ( $this instanceof Fluid_ICache_InMemoryDistributed &&
 					$cacheStore instanceof Fluid_ICacheStore_InMemoryDistributed ) {
+				fluid_log( "Cache _Expire: ( $key ). " . get_class( $cacheStore ) );
 				$cacheStore->delete( $key );
 			} elseif ( $this instanceof Fluid_ICache_Persistant &&
 					$cacheStore instanceof Fluid_ICacheStore_Persistant ) {
-				foreach( $cacheStore->getDependencyList( $key ) as $dep_key ) {
+
+				$dependency_list = $cacheStore->getDependencyList( $key );
+				$cacheStore->removeDependencyList( $key );
+				foreach( $dependency_list as $dep_key ) {
 					$this->_Expire( $dep_key );
-					$cacheStore->removeDependencyList( $key );
-					$cacheStore->delete( $key );
 				}
+				fluid_log( "Cache _Expire: ( $key ). " . get_class( $cacheStore ) );
+				$cacheStore->delete( $key );
 			}
 
 
@@ -66,6 +80,20 @@ abstract class Fluid_Cache
 				if ( $cacheStore instanceof Fluid_ICacheStore_Persistant ) {
 					fluid_log( "Cache Put: ( $key ). " . get_class( $cacheStore ) );
 					$cacheStore->put( $key, $value );
+
+
+				}
+			}
+		}
+	}
+
+
+	function PutPersistantDependency( $from_key, $to_key ) {
+		if ( $this instanceof Fluid_ICache_Persistant ) {
+			foreach( $this->cacheStore as $cacheStore ) {
+				if ( $cacheStore instanceof Fluid_ICacheStore_Persistant ) {
+					fluid_log( "Cache Put Dependency: ( $from_key, $to_key ). " . get_class( $cacheStore ) );
+					$cacheStore->addDependency( $from_key, $to_key );
 
 
 				}
@@ -151,6 +179,9 @@ abstract class Fluid_Cache
 
 		if ( $this instanceof Fluid_ICache_Persistant ) {
 			$this->PutPersistant( $key, $value );
+			foreach( $this->dependency_list as $dependency ) {
+				$this->PutPersistantDependency( $dependency, $key );
+			}
 		}
 
 
@@ -218,6 +249,19 @@ abstract class Fluid_Cache
 
 
 		return unserialize( $this->GetFromInMemoryLocal( $key, $params ) );
+	}
+
+
+	function getDependentFromCache() {
+		$params = func_get_args();
+		$name = array_shift( $params );
+
+
+		$cache = f()->Cache( $name );
+		$key = call_user_func_array( array($cache, "MakeKey"), $params );
+
+		$this->dependency_list[] = $key;
+		return call_user_func_array( array($cache, "Get"), $params );
 	}
 
 

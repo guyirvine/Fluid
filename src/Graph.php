@@ -25,6 +25,8 @@ class Fluid_Graph {
 	public $currentDataIndex;
 	public $colours;
 	
+	public $scale;
+	
 	function reset() {
 		$this->total_width=800;
 		$this->total_height=300;
@@ -45,6 +47,8 @@ class Fluid_Graph {
 
 		$this->currentDataIndex = 0;
 		$this->colours = array( 'green', 'red', 'blue' );
+		
+		$this->scale = null;
 	}
 
 	function __construct() {
@@ -63,9 +67,16 @@ class Fluid_Graph {
    height="{$this->total_height}"
    version="1.0">\n
 EOF;
+
+		if ( !is_null( $this->scale ) )
+			$buffer .= "<g transform='scale({$this->scale})'>\n";
+
 		$this->buffer .= $buffer;
 	}
 	function _close() {
+		if ( !is_null( $this->scale ) )
+			$this->buffer .= "</g>\n";
+
 		$this->buffer .= "</svg>";
 	}
 
@@ -77,6 +88,10 @@ EOF;
 	}
 
 	function drawStepsX( $number_of_steps, $height=3 ) {
+		if ( empty( $number_of_steps ) )
+			return;
+
+
 		$step_x = $this->graph['width'] / $number_of_steps;
 		$y_1 = $this->graph['y'];
 		$y_2 = $this->graph['y'] + $height;
@@ -97,6 +112,10 @@ EOF;
 	}
 
 	function drawStepsY( $number_of_steps, $width ) {
+		if ( empty( $number_of_steps ) )
+			return;
+
+
 		$step_y = $this->graph['height'] / $number_of_steps;
 		$x_1 = $this->graph['x'];
 		$x_2 = $this->graph['x'] - $width;
@@ -209,7 +228,7 @@ EOF;
 			$currentDate = $startDate->addDays($i );
 			if ( $currentDate->day == 1 ) {
 				$x = round( $x_1 + $step_x * $i );
-				
+
 				$label = strftime( "%b", $currentDate->timestamp );
 
 				$this->buffer .= "<text x='$x' y='$y' dy='$dy' text-anchor='middle' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
