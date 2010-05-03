@@ -78,7 +78,7 @@ abstract class Fluid_Cache
 		if ( $this instanceof Fluid_ICache_Persistant ) {
 			foreach( $this->cacheStore as $cacheStore ) {
 				if ( $cacheStore instanceof Fluid_ICacheStore_Persistant ) {
-					fluid_log( "Cache Put: ( $key ). " . get_class( $cacheStore ) );
+					fluid_log( "Cache PutPersistant: ( $key ). " . get_class( $cacheStore ) );
 					$cacheStore->put( $key, $value );
 
 
@@ -92,7 +92,7 @@ abstract class Fluid_Cache
 		if ( $this instanceof Fluid_ICache_Persistant ) {
 			foreach( $this->cacheStore as $cacheStore ) {
 				if ( $cacheStore instanceof Fluid_ICacheStore_Persistant ) {
-					fluid_log( "Cache Put Dependency: ( $from_key, $to_key ). " . get_class( $cacheStore ) );
+					fluid_log( "Cache PutPersistantDependency: ( $from_key, $to_key ). " . get_class( $cacheStore ) );
 					$cacheStore->addDependency( $from_key, $to_key );
 
 

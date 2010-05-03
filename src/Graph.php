@@ -56,6 +56,15 @@ class Fluid_Graph {
 	}
 
 	function _open() {
+		if ( is_null( $this->scale ) ) {
+			$width = ( $this->total_width );
+			$height = ( $this->total_height );
+		} else {
+			$width = $this->total_width * $this->scale;
+			$height = $this->total_height * $this->scale;
+		}
+
+
 		$buffer = <<<EOF
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
@@ -63,8 +72,8 @@ class Fluid_Graph {
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   width="{$this->total_width}"
-   height="{$this->total_height}"
+   width="$width"
+   height="$height"
    version="1.0">\n
 EOF;
 
@@ -137,7 +146,7 @@ EOF;
 	}
 
 
-	function drawYAxisNumeric( $min, $max ) {
+	function drawYAxisNumeric( $min, $max, $include_midrange_numbers=false ) {
 		$step = ( $max - $min ) / $this->steps_y_major;
 		$step_height = $this->graph['height'] / $this->steps_y_major;
 
@@ -145,14 +154,23 @@ EOF;
 		$x = $this->graph['x']-5;
 		$y = $this->graph['y'];
 		$dy = $this->labelHeight * ( .4 );
-		$this->buffer .= "<text x='$x' y='$y' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$min</text>\n";
-		for( $i=1;$i<$this->steps_y_major;$i++ ) {
-			$y = $this->graph['y'] - ( $step_height * $i );
 
-			$label = $step * $i;
-			$this->buffer .= "<text x='$x' y='$y' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
+
+		$label = number_format( $min );
+		$this->buffer .= "<text x='$x' y='$y' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
+		if ( $include_midrange_numbers ) {
+			for( $i=1;$i<$this->steps_y_major;$i++ ) {
+				$y = $this->graph['y'] - ( $step_height * $i );
+
+				$label = number_format( $step * $i );
+				$this->buffer .= "<text x='$x' y='$y' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
+			}
 		}
-		$this->buffer .= "<text x='$x' y='{$this->graph['y_2']}' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$max</text>\n";
+
+
+		$label = number_format( $max );
+		$this->buffer .= "<text x='$x' y='{$this->graph['y_2']}' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
+
 
 		$this->drawStepsYMajor();
 		$this->drawStepsYMinor();
