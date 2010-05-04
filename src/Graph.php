@@ -19,6 +19,8 @@ class Fluid_Graph {
 	public $steps_y_minor_length;
 	
 	public $title;
+	public $x_axis_label;
+	public $y_axis_label;
 
 	public $buffer;
 	
@@ -30,7 +32,11 @@ class Fluid_Graph {
 	function reset() {
 		$this->total_width=800;
 		$this->total_height=300;
-		$this->margin=50;
+		$this->margin=75;
+		$this->titleHeight=25;
+		$this->axisLabelHeight=15;
+		$this->labelHeight=10;
+
 
 		$this->steps_x_major = 5;
 		$this->steps_x_minor = 10;
@@ -44,6 +50,8 @@ class Fluid_Graph {
 		$this->steps_y_minor_length = 3;
 
 		$this->title = 'Quite a large testing Title';
+		$this->x_axis_label = null;
+		$this->y_axis_label = null;
 
 		$this->currentDataIndex = 0;
 		$this->colours = array( 'green', 'red', 'blue' );
@@ -83,6 +91,14 @@ EOF;
 		$this->buffer .= $buffer;
 	}
 	function _close() {
+		if ( !is_null( $this->x_axis_label ) ) {
+			$x = $this->axisLabelHeight + 2;
+			$y = $this->graph['height'] / 2 + $this->graph['y_2'];
+			$this->buffer .= "<!-- X-Axis Label -->\n" .
+							"<g><text  transform='rotate( -90, $x, $y )' x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->x_axis_label}</text></g>\n";
+		}
+
+
 		if ( !is_null( $this->scale ) )
 			$this->buffer .= "</g>\n";
 
@@ -93,7 +109,7 @@ EOF;
 		$this->buffer .= "<!-- Axis Bars -->\n" .
 						"<line x1='{$this->graph['x']}' y1='{$this->graph['y']}' x2='{$this->graph['x']}' y2='{$this->graph['y_2']}' style='stroke:black' />\n" .
 						"<line x1='{$this->graph['x']}' y1='{$this->graph['y']}' x2='{$this->graph['x_2']}' y2='{$this->graph['y']}' style='stroke:black' />\n";
-		
+
 	}
 
 	function drawStepsX( $number_of_steps, $height=3 ) {
@@ -309,12 +325,9 @@ EOF;
 		$this->graph['width'] = $this->total_width - ( $this->margin * 2 );
 		$this->graph['height'] = $this->total_height - ( $this->margin * 2 );
 
+
 		$this->graph['x_2'] = $this->graph['x'] + $this->graph['width'];
 		$this->graph['y_2'] = $this->graph['y'] - $this->graph['height'];
-
-
-		$this->titleHeight=$this->margin * .5;
-		$this->labelHeight=$this->margin * .3;
 
 
 		$this->buffer = "";
