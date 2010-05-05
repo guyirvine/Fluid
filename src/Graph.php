@@ -92,10 +92,18 @@ EOF;
 	}
 	function _close() {
 		if ( !is_null( $this->x_axis_label ) ) {
+			$x = $this->graph['width'] / 2 + $this->graph['x'];
+			$y = $this->graph['y'] + $this->steps_x_major_length + $this->labelHeight + $this->axisLabelHeight + 2;
+			$this->buffer .= "<!-- X-Axis Label -->\n" .
+							"<text x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->x_axis_label}</text>\n";
+		}
+
+
+		if ( !is_null( $this->y_axis_label ) ) {
 			$x = $this->axisLabelHeight + 2;
 			$y = $this->graph['height'] / 2 + $this->graph['y_2'];
-			$this->buffer .= "<!-- X-Axis Label -->\n" .
-							"<g><text  transform='rotate( -90, $x, $y )' x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->x_axis_label}</text></g>\n";
+			$this->buffer .= "<!-- Y-Axis Label -->\n" .
+							"<g><text  transform='rotate( -90, $x, $y )' x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->y_axis_label}</text></g>\n";
 		}
 
 
