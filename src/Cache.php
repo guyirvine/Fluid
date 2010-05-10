@@ -126,25 +126,6 @@ abstract class Fluid_Cache
 	}
 
 
-/*
-	function Put() {
-		$params = func_get_args();
-		$data = array_pop( $params );
-		$key = call_user_func_array(array($this, "MakeKey"), $params );
-		fluid_log( "Cache Put: ( $key ). " . get_class( $this ) );
-
-
-		$this->_Expire( $key );
-
-
-		$value = serialize( $data );
-		$this->PutPersistant( $key, $value );
-		$this->PutInMemoryDistributed( $key, $value );
-		$this->PutInMemoryLocal( $key, $value );
-	}
-*/
-
-
 	function Expire() {
 		$params = func_get_args();
 		$key = call_user_func_array(array($this, "MakeKey"), $params );

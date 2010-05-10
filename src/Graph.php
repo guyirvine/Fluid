@@ -7,12 +7,13 @@ class Fluid_Graph {
 	public $total_width;
 	public $total_height;
 	public $margin;
-	
+
 	public $steps_x_major;
 	public $steps_x_major_length;
 	public $steps_x_minor;
 	public $steps_x_minor_length;
 
+	public $y_graph_lines;
 	public $steps_y_major;
 	public $steps_y_major_length;
 	public $steps_y_minor;
@@ -38,6 +39,7 @@ class Fluid_Graph {
 		$this->labelHeight=10;
 
 
+		$this->y_graph_lines = false;
 		$this->steps_x_major = 5;
 		$this->steps_x_minor = 10;
 		$this->steps_y_major = 5;
@@ -93,7 +95,7 @@ EOF;
 	function _close() {
 		if ( !is_null( $this->x_axis_label ) ) {
 			$x = $this->graph['width'] / 2 + $this->graph['x'];
-			$y = $this->graph['y'] + $this->steps_x_major_length + $this->labelHeight + $this->axisLabelHeight + 2;
+			$y = $this->graph['y'] + $this->steps_x_major_length + $this->labelHeight + $this->axisLabelHeight + 7;
 			$this->buffer .= "<!-- X-Axis Label -->\n" .
 							"<text x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->x_axis_label}</text>\n";
 		}
@@ -192,6 +194,16 @@ EOF;
 		}
 
 
+		if ( $this->y_graph_lines ) {
+			for( $i=1;$i<=$this->steps_y_major;$i++ ) {
+				$y = $this->graph['y'] - ( $step_height * $i );
+
+				$this->buffer .= "<line x1='{$this->graph['x']}' y1='$y' x2='{$this->graph['x_2']}' y2='$y' style='stroke-dasharray: 20 5;stroke: lightgray;stroke-width: .2;' />\n";
+			}
+		}
+
+
+
 		$label = number_format( $max );
 		$this->buffer .= "<text x='$x' y='{$this->graph['y_2']}' text-anchor='end' dy='$dy' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
 
@@ -283,7 +295,7 @@ EOF;
 
 	function drawTitle() {
 		$x = $this->graph['width'] / 2 + $this->graph['x'];
-		$y = $this->graph['y_2'] - 2;
+		$y = $this->graph['y_2'] - 7;
 		$this->buffer .= "<!-- Title -->\n" .
 						"<text x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->titleHeight}' fill='blue' >{$this->title}</text>\n";
 	}

@@ -13,8 +13,8 @@ class Fluid {
 	private $user_id;
 	private $startTransaction;
 	private $cacheStore;
-	
-	
+
+
 	private $testingModeYn;
 	private $test_log;
 	public $deliverStateChanges;
@@ -56,7 +56,7 @@ class Fluid {
 		$this->fetched_object_list=array();
 		$this->cacheStore=array();
 		$this->cache_list=array();
-		
+
 
 		$this->pathDomainObject = "DomainObject";
 		$this->pathBuilder = "Builder";
@@ -76,12 +76,9 @@ class Fluid {
 	function isInTestingMode() {
 		return ( $this->testingModeYn == 'Y' );
 	}
-	function resetForTesting() {
-		$this->test_log = array();
-	}
 	function putInTestingMode() {
 		$this->testingModeYn = 'Y';
-		$this->resetForTesting();
+		$this->test_log = array();
 	}
 	private function logForTest( $type, $handler_name, $params=null, $returnValue=null ) {
 		if ( $this->isInTestingMode() ) {
@@ -198,7 +195,7 @@ class Fluid {
 		}
 
 
-		fluid_log( "Get: $name already fetched. Finished" );
+		fluid_log( "Get: $object_key. Finished" );
 		if ( $this->cache_fetched_objects )
 			$this->fetched_object_list[$object_key] = $obj;
 
@@ -216,6 +213,7 @@ class Fluid {
 				"SELECT n.id, n.name FROM " . $name . "_tbl n ORDER BY n.name ", 
 				array() );
 	}
+
 
 	function State() {
 		$params = func_get_args();
@@ -273,7 +271,7 @@ class Fluid {
 
 
 		$handler_name = "{$this->pathDao}_$name";
-		fluid_log( "$handler_name" );
+		fluid_log( "Dao: $name. $handler_name" );
 		$handler = new $handler_name( $this );
 		$this->logForTest( "Dao", $handler_name, null, null );
 
