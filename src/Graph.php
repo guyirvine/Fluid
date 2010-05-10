@@ -198,7 +198,7 @@ EOF;
 			for( $i=1;$i<=$this->steps_y_major;$i++ ) {
 				$y = $this->graph['y'] - ( $step_height * $i );
 
-				$this->buffer .= "<line x1='{$this->graph['x']}' y1='$y' x2='{$this->graph['x_2']}' y2='$y' style='stroke-dasharray: 20 5;stroke: lightgray;stroke-width: .2;' />\n";
+				$this->buffer .= "<line x1='{$this->graph['x']}' y1='$y' x2='{$this->graph['x_2']}' y2='$y' style='stroke-dasharray: 20 5;stroke: black;fill: black;stroke-width: .2;' />\n";
 			}
 		}
 
