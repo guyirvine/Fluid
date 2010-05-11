@@ -235,7 +235,7 @@ EOF;
 	}
 
 
-	function drawXAxisLabels() {
+	function drawXAxisLabels( $offset=.5 ) {
 		if ( empty( $this->x_axis_labels ) )
 			throw new Exception( '$this->x_axis_labels must be set' );
 
@@ -249,9 +249,9 @@ EOF;
 		$index = 0;
 		$x_1 = $this->graph['x'];
 		$step_x = $this->graph['width'] / $number_of_labels;
-		$y = $this->graph['y'];
+		$y = $this->graph['y'] + $this->steps_x_major_length;
 		foreach( $this->x_axis_labels as $label ) {
-			$x = round( $x_1 + $step_x * ( $index + .5 ) );
+			$x = round( $x_1 + $step_x * ( $index + $offset ) );
 
 			$this->buffer .= "<text x='$x' y='$y' dy='$dy' text-anchor='middle' font-family='Verdana' font-size='{$this->labelHeight}' fill='blue' >$label</text>\n";
 		
