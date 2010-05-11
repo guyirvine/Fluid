@@ -342,7 +342,8 @@ EOF;
 	public function init() {
 		$this->graph['x'] = $this->margin;
 		$this->graph['y'] = $this->total_height - $this->margin;
-		$this->graph['width'] = $this->total_width - ( $this->margin * 2 );
+//		$this->graph['width'] = $this->total_width - ( $this->margin * 2 );
+		$this->graph['width'] = $this->total_width - ( $this->margin );
 		$this->graph['height'] = $this->total_height - ( $this->margin * 2 );
 
 
