@@ -105,7 +105,8 @@ EOF;
 			$x = $this->axisLabelHeight + 2;
 			$y = $this->graph['height'] / 2 + $this->graph['y_2'];
 			$this->buffer .= "<!-- Y-Axis Label -->\n" .
-							"<g><text  transform='rotate( -90, $x, $y )' x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->y_axis_label}</text></g>\n";
+//							"<g><text  transform='rotate( -90, $x, $y )' x='$x' y='$y' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->y_axis_label}</text></g>\n";
+							"<g><text  transform='translate( $x, $y ) rotate( -90 )' x='0' y='0' text-anchor='middle' font-family='Verdana' font-size='{$this->axisLabelHeight}' fill='blue' >{$this->y_axis_label}</text></g>\n";
 		}
 
 
