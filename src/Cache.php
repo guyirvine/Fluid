@@ -1,5 +1,7 @@
 <?php
 require_once 'Fluid/Abstract.php';
+require_once 'Fluid/ICache/Persistant.php';
+require_once 'Fluid/ICache/InMemoryDistributed.php';
 
 
 //$value: contains serialized $data
@@ -154,6 +156,7 @@ abstract class Fluid_Cache
 
 
 		fluid_log( "Cache miss - Regenerate: ( $key )" );
+		$this->dependency_list = array();
 		$data = call_user_func_array(array($this, "Regenerate"), $params);
 		$value = serialize( $data );
 
