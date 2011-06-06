@@ -27,6 +27,8 @@ EOF;
 		$this->socket->write($buffer);
 
 		$buffer = $this->socket->read();
+		
+		return $this;
 	}
 
 
@@ -71,6 +73,13 @@ EOF;
 
 	function receive() {
 		return $this->socket->read();
+	}
+	
+	static function connectAndSend( $queue_name, $data ) {
+		$stomp = new Fluid_Stomp();
+		$stomp->connect();
+		$stomp->send( $queue_name, $data );
+		$stomp->disconnect();
 	}
 }
 

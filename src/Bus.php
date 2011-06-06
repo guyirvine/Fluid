@@ -1,36 +1,46 @@
 <?php
 require_once "Fluid/Fluid.php";
-require_once "Fluid/Mq/Client/Http.php";
-
-class Fluid_Bus {
 
 
-	private $conn;
-	private $iniFile;
-	public $from;
-	public $sagaId;
-	public $appName;
-	private $replyTo;
+abstract class Fluid_Bus {
 
-	private $MqClient;
+	private $saga_id;
 
+	private $mqClient;
+	public $local_queue;
+	private $message_queue_map;
 
-	function __construct( $app_name ) {
+	public $reply_to;
+
+	function __construct( Fluid_Mq_Client $mqClient, $local_queue ) {
 		$this->sagaId = null;
-		$_ini_file_path = "/etc/Fluid_Bus/$app_name.ini";
-		if ( is_file( $_ini_file_path ) ) {
-			$this->iniFile = parse_ini_file( $_ini_file_path, true );
-		} else {
-			$this->iniFile = array();
+
+		$this->mqClient = $mqClient;
+		$this->local_queue = $local_queue;
+		$this->reply_to = $local_queue;
+		
+		$this->message_queue_map = array(); 
+
+		if ( is_file( "Configuration/Bus.php" ) ) {
+			require_once "Configuration/Bus.php";
+			$configuration = new Configuration_Bus();
+			$configuration->Configure( array( "Bus"=>$this ) );
 		}
+		
+		fluid_log( "Fluid_Bus.__construct. Adding listener to queue: " . $this->local_queue );
+		$this->Listen( array( $this->local_queue ) );
 
-		$this->MqClient = new Fluid_Mq_Client_Http();
-
-
-		$this->appName = $app_name;
-		$this->replyTo = "$app_name@localhost";
 	}
 
+	public function addMsgMap( $msgName, $queue ) {
+		$this->message_queue_map[$msgName] = $queue;
+		
+		return $this;
+	}
+
+	abstract public function AddPubSub( $exchange, $queue_list );
+	abstract public function Listen( $queue_list );
+	abstract public function Run( );
 
 	private function localSend( $to, $xml ) {
 		if ( isset( $GLOBALS['testing'] ) ) {
@@ -44,7 +54,7 @@ class Fluid_Bus {
 		$saga_txt = is_null( $this->sagaId ) ? "" : " sagaId='" . $this->sagaId . "'";
 
 
-		$msg = "<msg from='" . $this->replyTo . "'$saga_txt>" .
+		$msg = "<msg from='" . $this->reply_to . "'$saga_txt>" .
 					$parts[1] .
 				"</msg>";
 
@@ -53,7 +63,7 @@ class Fluid_Bus {
 			$this->Receive( $msg );
 		} else {
 			fluid_log( "Fluid_Bus.localSend. $to. $msg" );
-			$this->MqClient->Send( $to, $msg );
+			$this->mqClient->Send( $to, $msg );
 		}
 	}
 
@@ -62,8 +72,8 @@ class Fluid_Bus {
 		$msg_name = (string)$xml->getName();
 
 
-		if ( isset( $this->iniFile['Bus'][$msg_name] ) ) {
-			$to = $this->iniFile['Bus'][$msg_name];
+		if ( isset( $this->message_queue_map[$msg_name] ) ) {
+			$to = $this->message_queue_map[$msg_name];
 			fluid_log( "Fluid_Bus.Send.$to: $msg_name" );
 		} else {
 			$to = false;
@@ -111,7 +121,6 @@ class Fluid_Bus {
 
 	}
 
-
 	function Publish( $xml ) {
 		$buffer = $xml->asXML();
 		$parts = explode( "\n", $buffer, 2 );
@@ -129,7 +138,6 @@ class Fluid_Bus {
 		}
 
 	}
-
 
 	static function get( $app_name="" ) {
 		static $name = null;

@@ -136,15 +136,23 @@ function run_table_filter( event ) {
 	value = $('filter').value.toLowerCase();
 	$$(".filter-tr").each(
 		function (elmt ) {
+			show=false;
 			elmt.select( '.filter-entry' ).each (
 				function ( filter_entry_element ) {
 					if ( filter_entry_element.innerHTML.toLowerCase().indexOf( value ) == -1 ) {
-						elmt.hide();
+//						elmt.hide();
 					} else {
-						elmt.show();
+						show=true;
+//						elmt.show();
 					}
 				}
 			);
+			if ( show ) {
+				elmt.show();
+			} else {
+				elmt.hide();
+			}
+					
 		}
 	);
 }

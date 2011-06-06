@@ -129,4 +129,20 @@ class Fluid_DocumentDb_CouchDb
 		return $response;
 	}
     
+	function delete( $key ) {
+		$response = $this->send( 'DELETE', $key );
+		if ( $response['headers']['code'] == '409' ) {
+			throw new DocumentConflictException( print_r( $response, true ) );
+
+		} elseif ( $response['headers']['code'] != '200' && $response['headers']['code'] != '201' ) {
+			var_dump( $response );
+			throw new Exception();
+		}
+
+
+
+		return $response;
+	}
+
+
 }

@@ -21,7 +21,7 @@ function fluid_ajax_exception_handler($e) {
 		fluid_log( "fluid_ajax_exception_handler. 1.3" );
 		header( 'x-valid: false' );
 //		header( 'x-message: ' . $e->getMessage() );
-		print "Unexpected Error: " . $e->getMessage();
+		print "Unexpected Error: " . $e->getMessage() . ".\n" . $e->getTraceAsString();
 	}
 }
 set_exception_handler('fluid_ajax_exception_handler');

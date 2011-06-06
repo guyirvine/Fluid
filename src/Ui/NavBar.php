@@ -7,10 +7,9 @@ class Fluid_Ui_NavBar {
 		return "href='' onclick='navbar( $start_index, $line_count );return false;'";
 	}
 
-    static function draw( $start, $page_row_count, $total_count, $url, $max_links=5 ) {
+    static function draw( $start, $page_row_count, $total_count, $max_links=5 ) {
         if ( $page_row_count > 0 && (integer)$total_count > (integer)$page_row_count ) {
             print "<td>";
-            $base_url = $url . "page=";
 
             $tempCount = $start;
             $current_page = 0;
@@ -39,10 +38,12 @@ class Fluid_Ui_NavBar {
                 $curr++;
             }
 
+		$from = $start+1;
+		$to = min( $start+$page_row_count, $total_count );
             print "<div id='navbar'>\n" .
                         "<table cellpadding='0' cellspacing='0'>\n" .
                             "<tr>\n" .
-                                "<td class='label'>Page $current_page of $page_count</td>";
+                                "<td class='label'>Displaying Results $from to $to of $total_count</td>";
 
             print "<td class='nav'><a " . self::write_link( 1, $page_row_count ) . ">&laquo;</a></td>";
 

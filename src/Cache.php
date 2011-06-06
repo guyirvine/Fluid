@@ -10,7 +10,7 @@ abstract class Fluid_Cache
 	extends Fluid_Abstract {
 
 
-	private $dependency_list;
+	protected $dependency_list;
 
 
 	function __construct( Fluid $fluid ) {
