@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Fluid/Bus.php';
-require_once 'Fluid/Mq/Amqp.php';
+require_once 'Fluid/Mq/Lib/Amqp.php';
 require_once "Fluid/Mq/Client/Amqp.php";
 
 

@@ -10,14 +10,11 @@ abstract class Fluid_Bus {
 	public $local_queue;
 	private $message_queue_map;
 
-	public $reply_to;
-
 	function __construct( Fluid_Mq_Client $mqClient, $local_queue ) {
 		$this->sagaId = null;
 
 		$this->mqClient = $mqClient;
 		$this->local_queue = $local_queue;
-		$this->reply_to = $local_queue;
 		
 		$this->message_queue_map = array(); 
 
@@ -26,7 +23,7 @@ abstract class Fluid_Bus {
 			$configuration = new Configuration_Bus();
 			$configuration->Configure( array( "Bus"=>$this ) );
 		}
-		
+
 		fluid_log( "Fluid_Bus.__construct. Adding listener to queue: " . $this->local_queue );
 		$this->Listen( array( $this->local_queue ) );
 
@@ -54,7 +51,7 @@ abstract class Fluid_Bus {
 		$saga_txt = is_null( $this->sagaId ) ? "" : " sagaId='" . $this->sagaId . "'";
 
 
-		$msg = "<msg from='" . $this->reply_to . "'$saga_txt>" .
+		$msg = "<msg from='" . $this->local_queue . "'$saga_txt>" .
 					$parts[1] .
 				"</msg>";
 

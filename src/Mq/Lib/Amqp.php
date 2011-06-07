@@ -7,7 +7,7 @@
    *
    */
 
-require_once('Fluid/Mq/Amqp/amqp_wire.php');
+require_once('Fluid/Mq/Lib/Amqp/amqp_wire.php');
 //require_once('hexdump.inc');
 
 function debug_msg($s)
