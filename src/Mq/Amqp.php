@@ -1,26 +1,33 @@
 <?php
 
-require_once 'Fluid/Bus.php';
+require_once 'Fluid/Mq.php';
+require_once 'Fluid/Mq/Client.php';
+require_once 'Fluid/Mq/IReceiver.php';
+
 require_once 'Fluid/Mq/Lib/Amqp.php';
-require_once "Fluid/Mq/Client/Amqp.php";
 
-
-class Fluid_Bus_Amqp 
-	extends Fluid_Bus {
+class Fluid_Mq_Amqp 
+	implements Fluid_Mq, Fluid_Mq_Client {
 
 
 	private $AMQPConnection;
 	private $channel;
+	private $receiver;
 
-	function __construct( AMQPConnection $AMQPConnection, $local_queue ) {
+	function __construct( AMQPConnection $AMQPConnection ) {
 
+		$this->AMQPConnection = $AMQPConnection;
 		$this->channel = $AMQPConnection->channel();
 
+	}
 
-		$mqClient = new Fluid_Mq_Client_Amqp( $AMQPConnection->channel() );
 
+	function setReceiver( Fluid_Mq_IReceiver $receiver ) {
+		$this->receiver = $receiver;
+	}
 
-		parent::__construct( $mqClient, $local_queue );
+	function callBackToBus( $msg ) {
+		$this->receiver->Receive( $msg );
 	}
 
 
@@ -39,7 +46,7 @@ class Fluid_Bus_Amqp
 			basic_cancel($msg->delivery_info['consumer_tag']);
 		}
 */
-		$this->Receive( $msg->body );
+		$this->callBackToBus( $msg->body );
 	}
 
 	function shutdown($ch, $conn){
@@ -78,7 +85,7 @@ class Fluid_Bus_Amqp
 		return $this;
 	}
 
-	public function Listen( $queue_list ) {
+	public function addListener( $queue_list ) {
 		if ( !is_array( $queue_list ) )
 			$queue_list = array( $queue_list );
 		/*
@@ -99,21 +106,27 @@ class Fluid_Bus_Amqp
 			$this->channel->basic_consume($queue_name, $consumer_tag, false, false, false, false, array( $this, 'processMessage') );
 			fluid_log( "Fluid_Bus_Amqp.Listen. Binding. $queue_name, $exchange" );
 		}
-		
+
 		return $this;
 	}
 
-	public static function get($local_queue, $host='localhost', $port=5672, $user='guest', $pass='guest',$vhost='/') {
+
+	function Send( $destination, $msg ) {
+		$_msg = new AMQPMessage($msg, array('content_type' => 'text/plain'));
+		fluid_log( "Fluid_Mq_Client_Amqp.Send. Destination: $destination, msg: $msg" );
+		
+		$this->channel->basic_publish($_msg, $destination);
+
+	}
+
+
+	public static function get($host='localhost', $port=5672, $user='guest', $pass='guest',$vhost='/') {
 
 		return 
-			new Fluid_Bus_Amqp( 
-				new AMQPConnection($host, $port, $user, $pass, $vhost ), 
-				$local_queue );
+			new Fluid_Mq_Amqp( 
+				new AMQPConnection($host, $port, $user, $pass, $vhost )  );
 	}
 
-	function Publish( $xml ) {
-		$this->Send( $xml );
-	}
 }
 /*
 $exchange = 'pub';

@@ -1,22 +1,37 @@
 <?php
 require_once "Fluid/Fluid.php";
+require_once "Fluid/Mq/IReceiver.php";
 
 
-abstract class Fluid_Bus {
+class Fluid_Bus 
+	implements Fluid_Mq_IReceiver
+{
 
 	private $saga_id;
 
+	private $mq;
 	private $mqClient;
 	public $local_queue;
 	private $message_queue_map;
 
-	function __construct( Fluid_Mq_Client $mqClient, $local_queue ) {
+	function __construct( $appName ) {
 		$this->sagaId = null;
 
-		$this->mqClient = $mqClient;
-		$this->local_queue = $local_queue;
-		
+		$this->local_queue = $appName;
 		$this->message_queue_map = array(); 
+
+		if ( is_file( "Configuration/Fluid.php" ) ) {
+			require_once "Configuration/Fluid.php";
+		}
+
+
+		if ( is_file( "Configuration/Mq.php" ) ) {
+			require_once "Configuration/Mq.php";
+			$configuration = new Configuration_Mq();
+			$mq = $configuration->Configure(array( "Bus"=>$this ));
+			$this->mq = $mq;
+			$this->mqClient = $mq;
+		}
 
 		if ( is_file( "Configuration/Bus.php" ) ) {
 			require_once "Configuration/Bus.php";
@@ -25,7 +40,7 @@ abstract class Fluid_Bus {
 		}
 
 		fluid_log( "Fluid_Bus.__construct. Adding listener to queue: " . $this->local_queue );
-		$this->Listen( array( $this->local_queue ) );
+		$this->mq->AddListener( array( $this->local_queue ) );
 
 	}
 
@@ -34,10 +49,6 @@ abstract class Fluid_Bus {
 		
 		return $this;
 	}
-
-	abstract public function AddPubSub( $exchange, $queue_list );
-	abstract public function Listen( $queue_list );
-	abstract public function Run( );
 
 	private function localSend( $to, $xml ) {
 		if ( isset( $GLOBALS['testing'] ) ) {
@@ -136,21 +147,25 @@ abstract class Fluid_Bus {
 
 	}
 
-	static function get( $app_name="" ) {
+	public function Run() {
+		$this->mq->Run();
+	}
+
+	static function get( $appName="" ) {
 		static $name = null;
 
 
-		if ( $app_name == "" ) {
+		if ( $appName == "" ) {
 			if ( $name == "" ) {
 				$parts = explode( "/", $_SERVER['REQUEST_URI'] );
 				$name = $parts[1];
 			}
-			$app_name = $name;
+			$appName = $name;
 		} else {
-			$name = $app_name;
+			$name = $appName;
 		}
 
-		$bus = new Fluid_Bus( $app_name );
+		$bus = new Fluid_Bus( $appName );
 
 		return $bus;
 	}

@@ -350,6 +350,7 @@ class AMQPConnection extends AbstractChannel
                                 $connection_timeout = 3,
                                 $read_write_timeout = 3)
     {
+	$this->sock = NULL;
 
         if($user && $password)
         {
@@ -415,14 +416,14 @@ class AMQPConnection extends AbstractChannel
             if($this->input)
                 $this->close();
 
-        if($this->sock)
+        if($this->sock != NULL)
         {
           if($this->debug)
           {
             debug_msg("closing socket");
           }
           
-          @fclose($this->sock);
+            @fclose($this->sock); $this->sock=NULL;
         }
     }
 
@@ -457,16 +458,15 @@ class AMQPConnection extends AbstractChannel
                 $this->input = NULL;
             }
         
-        if($this->sock)
+        if($this->sock != NULL)
         {
             if($this->debug)
             {
               debug_msg("closing socket");
             }
             
-            @fclose($this->sock);
-            $this->sock = NULL;
-        }
+             @fclose($this->sock); $this->sock=NULL;
+       }
     }
 
     public function get_free_channel_id()
